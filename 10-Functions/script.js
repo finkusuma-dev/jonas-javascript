@@ -131,7 +131,7 @@ lufthansa.buyPlane = function () {
 console.log(var1);
 // console.log(var2);
 
-/// Closure
+////////////////////////////// Closure
 
 function parentFunction(param1) {
   let parentVar1 = 0;
@@ -150,6 +150,19 @@ console.log(childFunction());
 console.log(childFunction());
 
 console.dir(childFunction);
+
+/// closure also used in this example with timer
+
+function timerFunction() {
+  // let a = 10;
+
+  setTimeout(function () {
+    console.log(`a x 2 = ${a * 2}`);
+  }, 3000);
+}
+
+let a = 100;
+timerFunction();
 
 // this keyword points to the button
 //document.querySelector('.buy').addEventListener('click', lufthansa.buyPlane);
