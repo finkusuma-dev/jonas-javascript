@@ -255,7 +255,7 @@ const header = document.querySelector('header');
 const navHeight = nav.getBoundingClientRect().height;
 
 const stickyNav = function (entries) {
-  console.log('entry', entries);
+  // console.log('entry', entries);
 
   if (entries[0].isIntersecting) {
     nav.classList.remove('sticky');
@@ -271,3 +271,160 @@ const headerObserver = new IntersectionObserver(stickyNav, {
 });
 
 headerObserver.observe(header);
+
+///////////////////////////////
+// Reveal Sections
+///////////////////////////////
+
+const sections = document.querySelectorAll('.section');
+
+const revealSections = function (entries, observer) {
+  // console.log('revealAnimation', entries[0], observer);
+  const [entry] = entries;
+
+  if (!entry.isIntersecting) return;
+
+  entry.target.classList.remove('section--hidden');
+  observer.unobserve(entry.target);
+};
+
+const sectionObserver = new IntersectionObserver(revealSections, {
+  root: null,
+  threshold: 0.11,
+});
+
+sections.forEach(section => {
+  console.log('section', section);
+  sectionObserver.observe(section);
+  // section.classList.add('section--hidden');
+});
+
+///////////////////////////////
+// Lazy Loading Images
+///////////////////////////////
+
+const lazyImages = document.querySelectorAll('img[data-src]');
+
+const lazyLoadingImages = function (entries, observer) {
+  const [entry] = entries;
+  if (!entry.isIntersecting) return;
+
+  console.log(`${entry.target.alt} intersecting`);
+  entry.target.src = entry.target.dataset.src;
+
+  entry.target.addEventListener('load', () => {
+    entry.target.classList.remove('lazy-img');
+  });
+
+  observer.unobserve(entry.target);
+};
+
+const imagesObserver = new IntersectionObserver(lazyLoadingImages, {
+  root: null,
+  threshold: 0,
+  rootMargin: '200px',
+});
+
+lazyImages.forEach(img => {
+  imagesObserver.observe(img);
+});
+
+///////////////////////////////
+// Slider
+///////////////////////////////
+
+const slider = function () {
+  const slides = document.querySelectorAll('.slide');
+  let curSlide = 0;
+  const slider = document.querySelector('.slider');
+  const dotsContainer = document.querySelector('.dots');
+
+  init();
+
+  function init() {
+    gotoSlide(curSlide);
+    createDots();
+  }
+
+  function gotoSlide(num) {
+    if (num < 0 || num > slides.length - 1) return;
+
+    curSlide = num;
+
+    /// Transform slides based on curSlide value
+    slides.forEach((slide, i) => {
+      // console.log('slider ', i, slide);
+      slide.style.transform = `translateX(${(i - num) * 100}%)`;
+    });
+
+    /// Update active dot
+    document.querySelectorAll('.dots__dot').forEach((dot, i) => {
+      // console.log('update active dot', i, num);
+      dot.classList.remove('dots__dot--active');
+      if (i === num) dot.classList.add('dots__dot--active');
+    });
+  }
+
+  function performSlide(direction) {
+    /// Update `curSlide` based on `direction`
+    ///
+    if (direction === 'right') {
+      curSlide++;
+    } else {
+      curSlide--;
+    }
+    /// first slide with the direction left, will make it last slide.
+    /// last slide with the direction right, will make it first slide.
+    curSlide = (slides.length + curSlide) % slides.length;
+
+    gotoSlide(curSlide);
+  }
+
+  /// Slider buttons click event
+  document
+    .querySelector('.slider__btn--right')
+    .addEventListener('click', () => performSlide('right'));
+  document
+    .querySelector('.slider__btn--left')
+    .addEventListener('click', () => performSlide('left'));
+
+  /// Keyboard arrows event
+  document.addEventListener('keydown', e => {
+    if (e.code === 'ArrowRight') performSlide('right');
+    else if (e.code === 'ArrowLeft') performSlide('lefft');
+  });
+
+  /// Create dots
+  function createDots() {
+    slides.forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.dataset.slide = i;
+      dot.classList.add('dots__dot');
+      if (i === curSlide) dot.classList.add('dots__dot--active');
+      dotsContainer.append(dot);
+    });
+  }
+
+  /// Dots click event
+  dotsContainer.addEventListener('click', e => {
+    if (!e.target.classList.contains('dots__dot')) return;
+
+    gotoSlide(Number(e.target.dataset.slide));
+  });
+};
+
+slider();
+
+document.addEventListener('DOMContentLoaded', e => {
+  console.log('DOMContentLoaded event', e);
+});
+
+window.addEventListener('load', e => {
+  console.log('Load event', e);
+});
+
+// window.addEventListener('beforeunload', e => {
+//   e.preventDefault();
+//   console.log('beforeonload', e);
+//   // e.returnValue = '';
+// });
