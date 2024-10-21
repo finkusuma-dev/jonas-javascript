@@ -2,6 +2,7 @@ import * as L from 'leaflet';
 import { Workout } from './Workout';
 import { Running } from './Running';
 import { Cycling } from './Cycling';
+import { invalidInputs } from '../helper';
 
 const DEFAULT_COORD: L.LatLngTuple = [-6.18, 106.82];
 const ZOOM = 14;
@@ -122,18 +123,56 @@ class App {
 
     /// Create workout object
     if (isRunning) {
+      const distance = +inputDistance.value;
+      const duration = +inputDuration.value;
+      const cadence = +inputCadence.value;
+
+      if (
+        invalidInputs(
+          { distance, duration, cadence },
+          (v) => !v || !Number.isFinite(v) || Number(v) < 0,
+          (name) => `${name} must be a positive number!`
+        )
+      ) {
+        return;
+      }
+
       workout = new Running({
-        distance: +inputDistance.value,
-        duration: +inputDuration.value,
-        cadence: +inputCadence.value,
+        distance,
+        duration,
+        cadence,
         coord: this.#tmpNewWorkout.latLng,
         name: isRunning ? 'Running' : 'Cycling',
       });
     } else {
+      const distance = +inputDistance.value;
+      const duration = +inputDuration.value;
+      const elevationGain = +inputElevation.value;
+
+      if (
+        invalidInputs(
+          { distance, duration, elevationGain },
+          (v) => !v || !Number.isFinite(v),
+          (name) => `${name} must be a positive number!`
+        )
+      ) {
+        return;
+      }
+
+      if (
+        invalidInputs(
+          { distance, duration },
+          (v) => Number(v) < 0,
+          (name) => `${name} must be a positive number!`
+        )
+      ) {
+        return;
+      }
+
       workout = new Cycling({
-        distance: +inputDistance.value,
-        duration: +inputDuration.value,
-        elevationGain: +inputElevation.value,
+        distance,
+        duration,
+        elevationGain,
         coord: this.#tmpNewWorkout.latLng,
         name: isRunning ? 'Running' : 'Cycling',
       });
@@ -242,7 +281,7 @@ class App {
     li.addEventListener('click', () => {
       this.#map.setView(workout.coord, ZOOM);
     });
-    containerWorkouts.prepend(li);
+    form.after(li);
   }
 
   _loadFromLocalStorage() {
