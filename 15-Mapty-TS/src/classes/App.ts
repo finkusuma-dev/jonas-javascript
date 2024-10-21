@@ -84,7 +84,7 @@ class App {
       },
       function (_) {
         geoWarning.classList.remove('hidden');
-        alert('Cannot get your current position!');
+        alert('Cannot access your current location!');
       }
     );
   }
