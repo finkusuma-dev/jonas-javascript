@@ -134,8 +134,8 @@ class App {
       if (
         invalidInputs(
           { distance, duration, cadence },
-          (v) => !v || !Number.isFinite(v) || Number(v) < 0,
-          (name) => `${name} must be a positive number!`
+          (value) => !value || !Number.isFinite(value) || Number(value) < 0,
+          (key) => `${key} must be a positive number!`
         )
       ) {
         return;
@@ -156,18 +156,14 @@ class App {
       if (
         invalidInputs(
           { distance, duration, elevationGain },
-          (v) => !v || !Number.isFinite(v),
-          (name) => `${name} must be a positive number!`
-        )
-      ) {
-        return;
-      }
-
-      if (
-        invalidInputs(
-          { distance, duration },
-          (v) => Number(v) < 0,
-          (name) => `${name} must be a positive number!`
+          (value, key) =>
+            key === 'elevationGain'
+              ? !value || !Number.isFinite(value)
+              : !value || !Number.isFinite(value) || Number(value) < 0,
+          (key) =>
+            key === 'elevationGain'
+              ? `${key} must be a number!`
+              : `${key} must be a positive number!`
         )
       ) {
         return;

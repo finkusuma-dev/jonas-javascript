@@ -22,14 +22,14 @@ export function sentenceCase(s: string) {
 }
 
 export function invalidInputs(
-  inputs: Record<string, number>,
-  predicate: (value: unknown) => boolean,
-  msg?: (name: string) => string
+  inputs: Record<string, unknown>,
+  predicate: (value: unknown, key: string) => boolean,
+  msg?: (key: string) => string
 ): boolean {
   let message = '';
 
   Object.entries(inputs).forEach((entry) => {
-    if (predicate(entry[1])) {
+    if (predicate(entry[1], entry[0])) {
       if (msg) message = message + sentenceCase(msg(entry[0])) + '\n';
       else message = message + `${sentenceCase(entry[0])} is invalid!\n`;
     }
