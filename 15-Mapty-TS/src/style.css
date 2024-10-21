@@ -113,6 +113,22 @@ a:visited {
   font-weight: 800;
 }
 
+.geo-warning {
+  border-radius: 5px;
+  margin-bottom: 15px;
+  padding: 1.5rem 2.75rem;
+  font-size: 1.5rem;
+  background-color: rgb(60, 0, 0);
+  color: #fff;
+}
+
+.geo-warning.hidden {
+  transform: translateY(-3rem);
+  height: 0;
+  margin-bottom: 0;
+  opacity: 0;
+}
+
 .form {
   background-color: var(--color-dark--2);
   border-radius: 5px;

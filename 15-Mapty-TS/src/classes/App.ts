@@ -26,7 +26,7 @@ const inputCadence: HTMLInputElement = document.querySelector(
 const inputElevation: HTMLInputElement = document.querySelector(
   '.form__input--elevation'
 )!;
-
+const geoWarning: HTMLInputElement = document.querySelector('.geo-warning')!;
 class App {
   workouts: Workout[];
   #map: L.Map;
@@ -61,10 +61,7 @@ class App {
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
 
-    /// Map click event
-    map.on('click', (e) => {
-      this._showForm([e.latlng.lat, e.latlng.lng]);
-    });
+    /// NOTE: map click event is set on get geolocation success.
 
     return map;
   }
@@ -78,8 +75,15 @@ class App {
       (pos) => {
         const { latitude, longitude } = pos.coords;
         this._setMapPosition([latitude, longitude]);
+
+        /// Map click event.
+        /// So user cannot add workout if get geo position fails.
+        this.#map.on('click', (e) => {
+          this._showForm([e.latlng.lat, e.latlng.lng]);
+        });
       },
       function (_) {
+        geoWarning.classList.remove('hidden');
         alert('Cannot get your current position!');
       }
     );
@@ -304,6 +308,10 @@ class App {
         this._renderWorkout(workout);
         this._renderWorkoutMarker(workout);
       });
+
+      if (this.workouts.length) {
+        this.#map.setView(this.workouts[this.workouts.length - 1].coord);
+      }
 
       console.log('this.workouts loaded', this.workouts);
     }
