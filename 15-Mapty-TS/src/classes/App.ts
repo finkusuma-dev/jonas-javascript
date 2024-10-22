@@ -243,7 +243,11 @@ class App {
           closeOnClick: false,
           className:
             workout instanceof Running ? 'running-popup' : 'cycling-popup',
-        }).setContent(workout.getDescription())
+        }).setContent(
+          `${
+            workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'
+          } ${workout.getDescription()}`
+        )
       )
       .openPopup();
   }

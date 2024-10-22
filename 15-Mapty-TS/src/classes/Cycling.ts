@@ -25,11 +25,11 @@ class Cycling extends Workout {
     return this.distance / this.duration;
   }
 
-  override getDescription(): string {
-    return `🚴‍♀️ ${sentenceCase(this.type || '')} on ${getMonth(
-      this.date.getMonth()
-    )} ${this.date.getDate()}`;
-  }
+  // override getDescription(): string {
+  //   return `🚴‍♀️ ${sentenceCase(this.type || '')} on ${getMonth(
+  //     this.date.getMonth()
+  //   )} ${this.date.getDate()}`;
+  // }
 }
 
 export { Cycling };
