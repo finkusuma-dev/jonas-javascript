@@ -102,6 +102,18 @@ class App {
     );
   }
 
+  _hideForm() {
+    /// Set display to none so it will dissapear immediately without animation.
+    /// It will make the form looks like replaced by the new workout element.
+    const tmpDisplay = form.style.display;
+    form.style.display = 'none';
+
+    /// Add hidden class, it will run the animation of hidden (css) for 1s.
+    form.classList.add('hidden');
+    /// Set the display back to the default value after 1s.
+    setTimeout(() => (form.style.display = tmpDisplay), 1000);
+  }
+
   _showForm(latlng: [number, number]) {
     /// Set latlng value on submit form
     this.#tmpNewWorkout.latLng = latlng;
@@ -202,7 +214,7 @@ class App {
     this._renderWorkoutMarker(workout);
 
     /// Hide form
-    form.classList.add('hidden');
+    this._hideForm();
   }
 
   _toggleElevationField() {
