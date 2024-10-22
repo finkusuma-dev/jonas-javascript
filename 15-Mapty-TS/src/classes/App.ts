@@ -173,7 +173,6 @@ class App {
         duration,
         elevationGain,
         coord: this.#tmpNewWorkout.latLng,
-        name: isRunning ? 'Running' : 'Cycling',
       });
     }
     this.#workouts.push(workout);
@@ -218,11 +217,7 @@ class App {
           closeOnClick: false,
           className:
             workout instanceof Running ? 'running-popup' : 'cycling-popup',
-        }).setContent(
-          workout instanceof Running
-            ? (workout as Running).getTitle()
-            : (workout as Cycling).getTitle()
-        )
+        }).setContent(workout.getDescription())
       )
       .openPopup();
   }
@@ -257,23 +252,22 @@ class App {
     li.dataset.id = workout.id.toString();
     const h2 = document.createElement('h2');
     h2.classList.add('workout__title');
+    h2.textContent = workout.getDescription();
     li.append(h2);
 
     li.append(createDetails('🏃‍♂️', workout.distance, 'km'));
     li.append(createDetails('⏱', workout.duration, 'min'));
 
-    if (workout instanceof Running) {
+    if (workout.type === 'running') {
       // console.log('instance of Running');
       li.classList.add('workout--running');
       const running = workout as Running;
-      h2.textContent = running.getTitle();
       li.append(createDetails('⚡️', running.pace, 'min/km'));
       li.append(createDetails('🦶🏼', running.cadence, 'spm'));
     } else {
       // console.log('instance of Cycling');
       li.classList.add('workout--cycling');
       const cycling = workout as Cycling;
-      h2.textContent = cycling.getTitle();
       li.append(createDetails('⚡️', cycling.speed, 'km/h'));
       li.append(createDetails('⛰', cycling.elevationGain, 'm'));
     }

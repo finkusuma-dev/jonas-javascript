@@ -1,9 +1,12 @@
+import { getMonth, sentenceCase } from '../helper';
+
 class Workout {
   id: number;
   distance: number;
   duration: number;
   coord: [number, number];
   date: Date;
+  type?: string;
 
   static lastId: number;
 
@@ -23,6 +26,12 @@ class Workout {
     this.duration = opts.duration;
     this.coord = opts.coord;
     this.date = opts.date ? new Date(opts.date) : new Date();
+  }
+
+  getDescription(): string {
+    return `${sentenceCase(this.type || '')} on ${getMonth(
+      this.date.getMonth()
+    )} ${this.date.getDate()}`;
   }
 }
 
