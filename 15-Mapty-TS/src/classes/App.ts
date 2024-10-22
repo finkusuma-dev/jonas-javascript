@@ -255,7 +255,13 @@ class App {
     h2.textContent = workout.getDescription();
     li.append(h2);
 
-    li.append(createDetails('🏃‍♂️', workout.distance, 'km'));
+    li.append(
+      createDetails(
+        workout.type === 'running' ? ' 🏃‍♂️' : '🚴‍♀️',
+        workout.distance,
+        'km'
+      )
+    );
     li.append(createDetails('⏱', workout.duration, 'min'));
 
     if (workout.type === 'running') {
