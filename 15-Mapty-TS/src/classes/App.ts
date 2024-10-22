@@ -278,14 +278,14 @@ class App {
   }
 
   _loadFromLocalStorage() {
-    const workouts = this._getLocalStorage('workouts');
-    if (workouts) {
+    const workoutsJSON = this._getLocalStorage('workouts');
+    if (workoutsJSON) {
       // this.workouts = workouts as Workout[];
-      console.log('load workouts', workouts);
+      console.log('load workouts json', workoutsJSON);
 
-      (workouts as Array<Record<string, any>>).forEach((w) => {
+      (workoutsJSON as Array<Record<string, any>>).forEach((w) => {
         let workout: Workout;
-        if (w.name === 'Running') {
+        if (w.type === 'running') {
           workout = new Running(w as any);
           // console.log('running', running, running.getTitle());
         } else {
