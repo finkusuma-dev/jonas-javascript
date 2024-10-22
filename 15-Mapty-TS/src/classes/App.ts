@@ -28,7 +28,7 @@ const inputElevation: HTMLInputElement = document.querySelector(
 )!;
 const geoWarning: HTMLInputElement = document.querySelector('.geo-warning')!;
 class App {
-  workouts: Workout[];
+  #workouts: Workout[] = [];
   #map: L.Map;
 
   #tmpNewWorkout: { latLng: [number, number] } = {
@@ -36,7 +36,6 @@ class App {
   };
 
   constructor(opts: { mapElement: string | HTMLElement }) {
-    this.workouts = [];
     this.#map = this._createMap(opts.mapElement);
 
     this._loadFromLocalStorage();
@@ -177,11 +176,11 @@ class App {
         name: isRunning ? 'Running' : 'Cycling',
       });
     }
-    this.workouts.push(workout);
+    this.#workouts.push(workout);
 
     /// Store workouts
-    this._setLocalStorage('workouts', this.workouts);
-    console.log('this.workouts', this.workouts);
+    this._setLocalStorage('workouts', this.#workouts);
+    console.log('this.workouts', this.#workouts);
 
     /// Create workout UI
     this._renderWorkout(workout);
@@ -299,17 +298,17 @@ class App {
           workout = new Cycling(w as any);
           // console.log('cycling', cycling, cycling.getTitle());
         }
-        this.workouts.push(workout);
+        this.#workouts.push(workout);
 
         this._renderWorkout(workout);
         this._renderWorkoutMarker(workout);
       });
 
-      if (this.workouts.length) {
-        this.#map.setView(this.workouts[this.workouts.length - 1].coord);
+      if (this.#workouts.length) {
+        this.#map.setView(this.#workouts[this.#workouts.length - 1].coord);
       }
 
-      console.log('this.workouts loaded', this.workouts);
+      console.log('this.workouts loaded', this.#workouts);
     }
   }
 
