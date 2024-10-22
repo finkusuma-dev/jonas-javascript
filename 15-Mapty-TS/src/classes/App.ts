@@ -50,6 +50,20 @@ class App {
       e.preventDefault();
       this._newWorkout();
     });
+
+    /// workout element click event
+    containerWorkouts.addEventListener('click', (e) => {
+      const workoutEl = (e.target as Element).closest('.workout');
+
+      if (!workoutEl) return;
+
+      const dataId = Number((workoutEl as HTMLElement).dataset.id);
+      const coord = this.#workouts.find((w) => w.id === dataId)?.coord;
+
+      if (!coord) return;
+
+      this.#map.setView(coord, ZOOM);
+    });
   }
 
   _createMap(mapElement: string | HTMLElement): L.Map {
@@ -277,9 +291,9 @@ class App {
       li.append(createDetails('⚡️', cycling.speed, 'km/h'));
       li.append(createDetails('⛰', cycling.elevationGain, 'm'));
     }
-    li.addEventListener('click', () => {
-      this.#map.setView(workout.coord, ZOOM);
-    });
+    // li.addEventListener('click', () => {
+    //   this.#map.setView(workout.coord, ZOOM);
+    // });
     form.after(li);
   }
 
