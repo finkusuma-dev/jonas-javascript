@@ -1,9 +1,9 @@
-import { getMonth } from '../helper';
+import { getMonth, sentenceCase } from '../helper';
 import { Workout } from './Workout';
 
 class Cycling extends Workout {
   elevationGain: number;
-  type = 'cycling';
+  override type = 'cycling';
 
   constructor(opts: {
     id?: number;
@@ -23,6 +23,12 @@ class Cycling extends Workout {
 
   get speed() {
     return this.distance / this.duration;
+  }
+
+  override getDescription(): string {
+    return `🚴‍♀️ ${sentenceCase(this.type || '')} on ${getMonth(
+      this.date.getMonth()
+    )} ${this.date.getDate()}`;
   }
 }
 
