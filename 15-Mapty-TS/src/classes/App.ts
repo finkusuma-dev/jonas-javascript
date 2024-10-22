@@ -133,7 +133,8 @@ class App {
       if (
         invalidInputs(
           { distance, duration, cadence },
-          (value) => !value || !Number.isFinite(value) || Number(value) < 0,
+          (value) =>
+            value == null || !Number.isFinite(value) || Number(value) < 0,
           (key) => `${key} must be a positive number!`
         )
       ) {
@@ -145,7 +146,6 @@ class App {
         duration,
         cadence,
         coord: this.#tmpNewWorkout.latLng,
-        name: isRunning ? 'Running' : 'Cycling',
       });
     } else {
       const distance = +inputDistance.value;
@@ -157,8 +157,8 @@ class App {
           { distance, duration, elevationGain },
           (value, key) =>
             key === 'elevationGain'
-              ? !value || !Number.isFinite(value)
-              : !value || !Number.isFinite(value) || Number(value) < 0,
+              ? value == null || !Number.isFinite(value)
+              : value == null || !Number.isFinite(value) || Number(value) < 0,
           (key) =>
             key === 'elevationGain'
               ? `${key} must be a number!`
