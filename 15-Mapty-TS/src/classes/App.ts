@@ -36,19 +36,19 @@ class App {
   };
 
   constructor(opts: { mapElement: string | HTMLElement }) {
-    this.#map = this._createMap(opts.mapElement);
+    this.#map = this.#createMap(opts.mapElement);
 
-    this._loadFromLocalStorage();
+    this.#loadFromLocalStorage();
 
-    this._getGeoPosition();
+    this.#getGeoPosition();
 
     /// Input type change event
-    inputType.addEventListener('change', (_) => this._toggleElevationField());
+    inputType.addEventListener('change', (_) => this.#toggleElevationField());
 
     /// Form submit event
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      this._newWorkout();
+      this.#newWorkout();
     });
 
     /// workout element click event
@@ -66,7 +66,7 @@ class App {
     });
   }
 
-  _createMap(mapElement: string | HTMLElement): L.Map {
+  #createMap(mapElement: string | HTMLElement): L.Map {
     const map = L.map(mapElement).setView(DEFAULT_COORD, ZOOM);
 
     L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
@@ -79,20 +79,20 @@ class App {
     return map;
   }
 
-  _setMapPosition(latlng: [number, number]) {
+  #setMapPosition(latlng: [number, number]) {
     this.#map.setView(latlng, ZOOM);
   }
 
-  _getGeoPosition() {
+  #getGeoPosition() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
-        this._setMapPosition([latitude, longitude]);
+        this.#setMapPosition([latitude, longitude]);
 
         /// Map click event.
         /// So user cannot add workout if get geo position fails.
         this.#map.on('click', (e) => {
-          this._showForm([e.latlng.lat, e.latlng.lng]);
+          this.#showForm([e.latlng.lat, e.latlng.lng]);
         });
       },
       function (_) {
@@ -102,7 +102,7 @@ class App {
     );
   }
 
-  _hideForm() {
+  #hideForm() {
     /// Set display to none so it will dissapear immediately without animation.
     /// It will make the form looks like replaced by the new workout element.
     const tmpDisplay = form.style.display;
@@ -114,7 +114,7 @@ class App {
     setTimeout(() => (form.style.display = tmpDisplay), 1000);
   }
 
-  _showForm(latlng: [number, number]) {
+  #showForm(latlng: [number, number]) {
     /// Set latlng value on submit form
     this.#tmpNewWorkout.latLng = latlng;
 
@@ -146,7 +146,7 @@ class App {
     inputDistance.focus();
   }
 
-  _newWorkout() {
+  #newWorkout() {
     const isRunning = inputType.value === 'running';
     let workout;
 
@@ -204,20 +204,20 @@ class App {
     this.#workouts.push(workout);
 
     /// Store workouts
-    this._setLocalStorage('workouts', this.#workouts);
+    this.#setLocalStorage('workouts', this.#workouts);
     console.log('this.workouts', this.#workouts);
 
     /// Create workout UI
-    this._renderWorkout(workout);
+    this.#renderWorkout(workout);
 
     /// Add map marker
-    this._renderWorkoutMarker(workout);
+    this.#renderWorkoutMarker(workout);
 
     /// Hide form
-    this._hideForm();
+    this.#hideForm();
   }
 
-  _toggleElevationField() {
+  #toggleElevationField() {
     const cadenceRow = inputCadence.closest('.form__row') as HTMLHtmlElement;
     const elevationRow = inputElevation.closest(
       '.form__row'
@@ -231,7 +231,7 @@ class App {
     inputDistance.focus();
   }
 
-  _renderWorkoutMarker(workout: Workout) {
+  #renderWorkoutMarker(workout: Workout) {
     const marker = L.marker(workout.coord);
     marker.addTo(this.#map);
     marker
@@ -252,7 +252,7 @@ class App {
       .openPopup();
   }
 
-  _renderWorkout(workout: Workout) {
+  #renderWorkout(workout: Workout) {
     function createDetails(
       icon: string,
       value: number,
@@ -313,8 +313,8 @@ class App {
     form.after(li);
   }
 
-  _loadFromLocalStorage() {
-    const workoutsJSON = this._getLocalStorage('workouts');
+  #loadFromLocalStorage() {
+    const workoutsJSON = this.#getLocalStorage('workouts');
     if (workoutsJSON) {
       // this.workouts = workouts as Workout[];
       console.log('load workouts json', workoutsJSON);
@@ -330,8 +330,8 @@ class App {
         }
         this.#workouts.push(workout);
 
-        this._renderWorkout(workout);
-        this._renderWorkoutMarker(workout);
+        this.#renderWorkout(workout);
+        this.#renderWorkoutMarker(workout);
       });
 
       if (this.#workouts.length) {
@@ -342,11 +342,11 @@ class App {
     }
   }
 
-  _setLocalStorage(key: string, obj: Object) {
+  #setLocalStorage(key: string, obj: Object) {
     localStorage.setItem(key, JSON.stringify(obj));
   }
 
-  _getLocalStorage(key: string): any | null {
+  #getLocalStorage(key: string): any | null {
     const s = localStorage.getItem(key);
     if (s) {
       return JSON.parse(s);
