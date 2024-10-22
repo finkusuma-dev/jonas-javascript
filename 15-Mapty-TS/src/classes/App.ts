@@ -52,18 +52,10 @@ class App {
     });
 
     /// workout element click event
-    containerWorkouts.addEventListener('click', (e) => {
-      const workoutEl = (e.target as Element).closest('.workout');
-
-      if (!workoutEl) return;
-
-      const dataId = Number((workoutEl as HTMLElement).dataset.id);
-      const coord = this.#workouts.find((w) => w.id === dataId)?.coord;
-
-      if (!coord) return;
-
-      this.#map.setView(coord, ZOOM);
-    });
+    containerWorkouts.addEventListener(
+      'click',
+      this.#containerWorkoutsClick.bind(this)
+    );
   }
 
   #createMap(mapElement: string | HTMLElement): L.Map {
@@ -352,6 +344,22 @@ class App {
       return JSON.parse(s);
     }
     return null;
+  }
+
+  #containerWorkoutsClick(e: Event) {
+    const workoutEl = (e.target as Element).closest('.workout');
+
+    if (!workoutEl) return;
+
+    const dataId = Number((workoutEl as HTMLElement).dataset.id);
+    const coord = this.#workouts.find((w) => w.id === dataId)?.coord;
+
+    if (!coord) return;
+
+    this.#map.setView(coord, ZOOM, {
+      animate: true,
+      duration: 1,
+    });
   }
 }
 
