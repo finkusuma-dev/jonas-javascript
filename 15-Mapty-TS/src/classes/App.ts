@@ -361,6 +361,11 @@ class App {
       duration: 1,
     });
   }
+
+  reset() {
+    localStorage.removeItem('workouts');
+    location.reload();
+  }
 }
 
 export default App;
