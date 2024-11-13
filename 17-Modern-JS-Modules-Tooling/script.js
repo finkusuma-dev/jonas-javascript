@@ -20,3 +20,10 @@ console.dir({ state, stateClone });
 if (module.hot) {
   module.hot.accept();
 }
+
+console.log(state.cart.find(el => el.quantity > 4));
+/// Only Array method find will be polyfilled
+// import 'core-js/stable/array/find';
+
+/// Polyfill all features
+import 'core-js';
