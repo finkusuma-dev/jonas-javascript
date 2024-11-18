@@ -1,5 +1,6 @@
 // import icons from '../img/icons.svg'; /// parcel v1
 import icons from 'url:../../img/icons.svg'; /// parcel v2 => icons = path to the dist svg file.
+import fracty from 'fracty';
 import * as model from '../model';
 
 const securityElement = document.createElement('div');
@@ -97,20 +98,7 @@ class RecipeView {
         <h2 class="heading--2">Recipe ingredients</h2>
         <ul class="recipe__ingredient-list">
           ${this.#data.ingredients
-            .map(
-              ing => `
-            <li class="recipe__ingredient">
-            <svg class="recipe__icon">
-              <use href="${icons}#icon-check"></use>
-            </svg>
-            <div class="recipe__quantity">${escapeHTML(ing.quantity)}</div>
-            <div class="recipe__description">
-              <span class="recipe__unit">${escapeHTML(ing.unit)}</span>
-              ${ing.description}
-            </div>
-          </li>
-            `
-            )
+            .map(ing => this.#generateMarkupIngredient(ing))
             .join('')}
         </ul>
       </div>
@@ -135,6 +123,21 @@ class RecipeView {
         </a>
       </div>
     `;
+  }
+
+  #generateMarkupIngredient(ing) {
+    return `
+      <li class="recipe__ingredient">
+      <svg class="recipe__icon">
+        <use href="${icons}#icon-check"></use>
+      </svg>
+      <div class="recipe__quantity">${fracty(escapeHTML(ing.quantity))}</div>
+      <div class="recipe__description">
+        <span class="recipe__unit">${escapeHTML(ing.unit)}</span>
+        ${ing.description}
+      </div>
+    </li>
+  `;
   }
 }
 
