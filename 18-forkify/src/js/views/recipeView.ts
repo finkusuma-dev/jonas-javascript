@@ -20,6 +20,18 @@ class RecipeView {
     this.#parentElement.innerHTML = markup;
   }
 
+  addHandlerRender(handler: (id: string) => void) {
+    ['hashchange', 'load'].forEach(ev => {
+      window.addEventListener(ev, function () {
+        const hashId = this.window.location.hash.slice(1);
+
+        // console.log(hashId);
+        if (!hashId) return;
+        handler(hashId);
+      });
+    });
+  }
+
   renderError() {
     const markup = `<div class="error">
             <div>

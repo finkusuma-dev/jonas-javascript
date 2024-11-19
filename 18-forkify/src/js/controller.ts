@@ -17,11 +17,8 @@ const controlRecipe = async function (id: string) {
   }
 };
 
-['hashchange', 'load'].forEach(ev => {
-  window.addEventListener(ev, function () {
-    const hashId = this.window.location.hash.slice(1);
-    // console.log(hashId);
-    if (!hashId) return;
-    controlRecipe(hashId);
-  });
-});
+const init = function () {
+  recipeView.addHandlerRender(controlRecipe);
+};
+
+init();
