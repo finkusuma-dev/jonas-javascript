@@ -13,6 +13,7 @@ function escapeHTML(input) {
 class RecipeView {
   #parentElement: HTMLElement = document.querySelector('.recipe')!;
   #data: model.Recipe;
+  #errorMessage = 'No recipes found for your query. Please try again!';
 
   render(data: model.Recipe) {
     this.#data = data;
@@ -32,14 +33,14 @@ class RecipeView {
     });
   }
 
-  renderError() {
+  renderError(message: string = this.#errorMessage) {
     const markup = `<div class="error">
             <div>
               <svg>
                 <use href="${icons}#icon-alert-triangle"></use>
               </svg>
             </div>
-            <p>No recipes found for your query. Please try again!</p>
+            <p>${message}</p>
           </div>`;
     this.#parentElement.innerHTML = markup;
   }
