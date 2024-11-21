@@ -14,6 +14,8 @@ class RecipeView {
   #parentElement: HTMLElement = document.querySelector('.recipe')!;
   #data: model.Recipe;
   #errorMessage = 'No recipes found for your query. Please try again!';
+  #defaultMessage =
+    'Start by searching for a recipe or an ingredient. Have fun!';
 
   render(data: model.Recipe) {
     this.#data = data;
@@ -21,15 +23,9 @@ class RecipeView {
     this.#parentElement.innerHTML = markup;
   }
 
-  addHandlerRender(handler: (id: string) => void) {
+  addHandlerRender(handler: () => void) {
     ['hashchange', 'load'].forEach(ev => {
-      window.addEventListener(ev, function () {
-        const hashId = this.window.location.hash.slice(1);
-
-        // console.log(hashId);
-        if (!hashId) return;
-        handler(hashId);
-      });
+      window.addEventListener(ev, handler);
     });
   }
 
@@ -44,6 +40,19 @@ class RecipeView {
           </div>`;
     this.#parentElement.innerHTML = markup;
   }
+
+  renderMessage(message: string = this.#defaultMessage) {
+    const markup = `<div class="message">
+        <div>
+          <svg>
+            <use href="${icons}#icon-smile"></use>
+          </svg>
+        </div>
+        <p>${message}</p>
+      </div>`;
+    this.#parentElement.innerHTML = markup;
+  }
+
   renderSpinner() {
     const markup = `<div class="spinner">
         <svg>

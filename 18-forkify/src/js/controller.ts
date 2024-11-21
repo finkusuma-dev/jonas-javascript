@@ -7,10 +7,17 @@ const recipeContainer: HTMLElement = document.querySelector('.recipe')!;
 
 ///////////////////////////////////////
 
-const controlRecipe = async function (id: string) {
+const controlRecipe = async function () {
   recipeView.renderSpinner();
   try {
-    await model.loadRecipe(id);
+    const hashId = this.window.location.hash.slice(1);
+
+    // console.log(hashId);
+    if (!hashId) {
+      recipeView.renderMessage();
+      return;
+    }
+    await model.loadRecipe(hashId);
     recipeView.render(model.state.recipe!);
   } catch (err) {
     recipeView.renderError();
