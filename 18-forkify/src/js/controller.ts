@@ -1,5 +1,6 @@
 import * as model from './model';
 import recipeView from './views/recipeView';
+import searchView from './views/searchView';
 
 const recipeContainer: HTMLElement = document.querySelector('.recipe')!;
 
@@ -24,8 +25,21 @@ const controlRecipe = async function () {
   }
 };
 
+const controlSearchResults = async function () {
+  recipeView.renderSpinner();
+  try {
+    const query = searchView.getQuery();
+    await model.loadSearchResult(query);
+    console.dir(model.state.search.results);
+    recipeView.clear();
+  } catch (err) {
+    recipeView.renderError(err);
+  }
+};
+
 const init = function () {
   recipeView.addHandlerRender(controlRecipe);
+  searchView.addHandlerSearch(controlSearchResults);
 };
 
 init();
