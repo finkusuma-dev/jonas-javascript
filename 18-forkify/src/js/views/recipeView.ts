@@ -17,6 +17,10 @@ class RecipeView {
   #defaultMessage =
     'Start by searching for a recipe or an ingredient. Have fun!';
 
+  clear() {
+    this.#parentElement.innerHTML = '';
+  }
+
   render(data: model.Recipe) {
     this.#data = data;
     const markup = this.#generateMarkup();
@@ -119,8 +123,8 @@ class RecipeView {
       <div class="recipe__ingredients">
         <h2 class="heading--2">Recipe ingredients</h2>
         <ul class="recipe__ingredient-list">
-          ${this.#data.ingredients
-            .map(ing => this.#generateMarkupIngredient(ing))
+          ${this.#data
+            .ingredients!.map(ing => this.#generateMarkupIngredient(ing))
             .join('')}
         </ul>
       </div>
