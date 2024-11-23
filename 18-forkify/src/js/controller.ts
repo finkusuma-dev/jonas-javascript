@@ -3,6 +3,11 @@ import recipeView from './views/recipeView';
 import searchResultsView from './views/searchResultsView';
 import searchView from './views/searchView';
 
+/// typescript doesn't recognize module, so install @types/node package
+if (module.hot) {
+  module.hot.accept();
+}
+
 const controlRecipe = async function () {
   recipeView.renderSpinner();
   try {
