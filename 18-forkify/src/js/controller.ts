@@ -11,9 +11,9 @@ if (module.hot) {
 const controlRecipe = async function () {
   recipeView.renderSpinner();
   try {
-    const hashId = this.window.location.hash.slice(1);
+    const hashId = window.location.hash.slice(1);
 
-    // console.log(hashId);
+    // console.dir(hashId);
     if (!hashId) {
       recipeView.renderMessage();
       return;
@@ -26,16 +26,16 @@ const controlRecipe = async function () {
 };
 
 const controlSearchResults = async function () {
-  recipeView.renderSpinner();
+  console.log('searching...');
   try {
     const query = searchView.getQuery();
     await model.loadSearchResult(query);
     // console.dir(model.state.search.results);
 
     searchResultsView.render(model.state.search.results);
-    recipeView.clear();
+    console.log('search finished');
   } catch (err) {
-    recipeView.renderError(err);
+    recipeView.renderError(err as string);
   }
 };
 

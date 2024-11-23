@@ -40,7 +40,7 @@ export const loadRecipe = async function (id: string) {
     const { recipe } = data.data;
     state.recipe = assignRecipe(recipe);
 
-    console.dir(state.recipe);
+    // console.dir(state.recipe);
   } catch (err) {
     console.error(err);
     throw err;
