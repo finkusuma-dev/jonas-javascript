@@ -1,6 +1,6 @@
 import { TIMEOUT_SEC } from './config';
 
-const timeout = function (s): Promise<never> {
+const timeout = function (s: number): Promise<never> {
   return new Promise(function (_, reject) {
     setTimeout(function () {
       reject(new Error(`Request took too long! Timeout after ${s} second`));
@@ -8,7 +8,7 @@ const timeout = function (s): Promise<never> {
   });
 };
 
-export const getJSON = async function (url) {
+export const getJSON = async function (url: `https://${string}`) {
   try {
     const res = await Promise.race([fetch(url), timeout(TIMEOUT_SEC)]);
     const data = await res.json();
