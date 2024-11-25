@@ -4,8 +4,8 @@ import searchResultsView from './views/searchResultsView';
 import searchView from './views/searchView';
 
 /// Typescript doesn't recognize module, so I added lib/module.d.ts.
-/// The default error message is to install @types/node package.
-/// Maybe it's better to install the recommended package then augments a new type (`hot`).
+/// After installing `@types/node` package, I added HMR types to NodeModule interface,
+/// which is the interface for module.
 if (module.hot) {
   module.hot.accept();
 }
