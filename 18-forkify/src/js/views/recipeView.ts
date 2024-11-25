@@ -15,8 +15,9 @@ class RecipeView extends View<model.Recipe> {
   protected override _parentElement: HTMLElement =
     document.querySelector('.recipe')!;
 
-  #errorMessage = 'No recipes found for your query. Please try again!';
-  #defaultMessage =
+  protected override _errorMessage =
+    'No recipes found for your query. Please try again!';
+  protected override _defaultMessage =
     'Start by searching for a recipe or an ingredient. Have fun!';
 
   addHandlerRender(handler: () => void) {
@@ -25,36 +26,14 @@ class RecipeView extends View<model.Recipe> {
     });
   }
 
-  renderError(message: string = this.#errorMessage) {
-    const markup = `<div class="error">
-            <div>
-              <svg>
-                <use href="${icons}#icon-alert-triangle"></use>
-              </svg>
-            </div>
-            <p>${message}</p>
-          </div>`;
-    this._parentElement.innerHTML = markup;
-  }
-
-  renderMessage(message: string = this.#defaultMessage) {
-    const markup = `<div class="message">
-        <div>
-          <svg>
-            <use href="${icons}#icon-smile"></use>
-          </svg>
-        </div>
-        <p>${message}</p>
-      </div>`;
-    this._parentElement.innerHTML = markup;
-  }
-
   protected override _generateMarkup() {
     console.log('recipeView _generateMarkup');
 
     return `
     <figure class="recipe__fig">
-        <img src="${this._data.image}" alt="Tomato" class="recipe__img" />
+        <img src="${
+          this._data.image
+        }" alt="Tomato" class="recipe__img" />
         <h1 class="recipe__title">
           <span>${this._data.title}</span>
         </h1>
@@ -109,7 +88,9 @@ class RecipeView extends View<model.Recipe> {
         <h2 class="heading--2">Recipe ingredients</h2>
         <ul class="recipe__ingredient-list">
           ${this._data
-            .ingredients!.map(ing => this.#generateMarkupIngredient(ing))
+            .ingredients!.map(ing =>
+              this.#generateMarkupIngredient(ing)
+            )
             .join('')}
         </ul>
       </div>
@@ -142,7 +123,9 @@ class RecipeView extends View<model.Recipe> {
       <svg class="recipe__icon">
         <use href="${icons}#icon-check"></use>
       </svg>
-      <div class="recipe__quantity">${escapeHTML(fracty(ing.quantity))}</div>
+      <div class="recipe__quantity">${escapeHTML(
+        fracty(ing.quantity)
+      )}</div>
       <div class="recipe__description">
         <span class="recipe__unit">${escapeHTML(ing.unit)}</span>
         ${ing.description}
