@@ -1,40 +1,38 @@
 import icons from 'url:../../img/icons.svg';
+import View from './View';
 import * as model from '../model';
 import { RESULT_PER_PAGE } from '../config';
 
-class SearchResultsView {
-  #parentElement: HTMLElement = document.querySelector('.search-results')!;
-  #paginationContainer: HTMLElement = document.querySelector('.pagination')!;
+class SearchResultsView extends View<model.Recipe[]> {
+  protected override _parentElement: HTMLElement =
+    document.querySelector('.results')!;
+  #paginationContainer: HTMLElement =
+    document.querySelector('.pagination')!;
   #page: number = 1;
-  #data?: model.Recipe[];
 
-  render(data?: model.Recipe[]) {
-    // console.log('render Results');
-    this.#data = data;
+  override render(data?: model.Recipe[]) {
+    // console.log('render data', data);
+    this._data = data ?? [];
     this.renderPage(1);
   }
 
   renderPage(pageNumber: number) {
+    // console.log('renderPage');
     this.#page = pageNumber;
 
-    console.dir(
-      this.#getPaginationStartNumber(),
-      this.#getPaginationEndNumber()
-    );
+    // console.dir(
+    //   this.#getPaginationStartNumber(),
+    //   this.#getPaginationEndNumber()
+    // );
 
-    const renderResults = this.#data?.slice(
+    const renderResults = this._data?.slice(
       this.#getPaginationStartNumber(),
       this.#getPaginationEndNumber() + 1
     );
 
-    console.dir(renderResults);
+    const markup = this._generateMarkup(renderResults);
 
-    const markup = this.#generateMarkup(renderResults);
-
-    const searchResultsContainer: HTMLElement =
-      this.#parentElement.querySelector('.results')!;
-
-    searchResultsContainer.innerHTML = markup;
+    this._parentElement.innerHTML = markup;
 
     this.#renderPagination();
   }
@@ -49,7 +47,10 @@ class SearchResultsView {
             </svg>
             <span>Page ${this.#getPrevPage()}</span>
           </button>`;
-      this.#paginationContainer.insertAdjacentHTML('afterbegin', markup);
+      this.#paginationContainer.insertAdjacentHTML(
+        'afterbegin',
+        markup
+      );
       (
         this.#paginationContainer.querySelector(
           '.pagination__btn--prev'
@@ -66,7 +67,10 @@ class SearchResultsView {
               <use href="${icons}#icon-arrow-right"></use>
             </svg>
           </button>`;
-      this.#paginationContainer.insertAdjacentHTML('beforeend', markup);
+      this.#paginationContainer.insertAdjacentHTML(
+        'beforeend',
+        markup
+      );
       (
         this.#paginationContainer.querySelector(
           '.pagination__btn--next'
@@ -82,8 +86,8 @@ class SearchResultsView {
   }
 
   get #isLastPage(): boolean {
-    return this.#data
-      ? this.#page === Math.ceil(this.#data?.length / RESULT_PER_PAGE)
+    return this._data
+      ? this.#page === Math.ceil(this._data?.length / RESULT_PER_PAGE)
       : true;
   }
 
@@ -101,8 +105,11 @@ class SearchResultsView {
     return this.#isLastPage ? this.#page : this.#page + 1;
   }
 
-  #generateMarkup(results?: model.Recipe[]) {
-    return results?.map(res => this.#generateMarkupResult(res)).join('') ?? '';
+  protected override _generateMarkup(results?: model.Recipe[]) {
+    return (
+      results?.map(res => this.#generateMarkupResult(res)).join('') ??
+      ''
+    );
   }
 
   #generateMarkupResult(recipe: model.Recipe) {

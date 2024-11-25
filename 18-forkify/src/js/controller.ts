@@ -26,16 +26,15 @@ const controlRecipe = async function () {
 };
 
 const controlSearchResults = async function () {
-  console.log('searching...');
+  searchResultsView.renderSpinner();
   try {
     const query = searchView.getQuery();
     await model.loadSearchResult(query);
     // console.dir(model.state.search.results);
 
     searchResultsView.render(model.state.search.results);
-    console.log('search finished');
   } catch (err) {
-    recipeView.renderError(err as string);
+    searchResultsView.renderError(err as string);
   }
 };
 
