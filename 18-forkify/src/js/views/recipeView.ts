@@ -27,8 +27,6 @@ class RecipeView extends View<model.Recipe> {
   }
 
   protected override _generateMarkup() {
-    console.log('recipeView _generateMarkup');
-
     return `
     <figure class="recipe__fig">
         <img src="${
