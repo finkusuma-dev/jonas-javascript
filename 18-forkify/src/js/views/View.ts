@@ -8,6 +8,9 @@ export default class View<T> {
 
   render(data?: T) {
     this._data = data ?? ({} as T);
+    if (!data || (Array.isArray(data) && !data.length)) {
+      return this.renderError();
+    }
     const markup = this._generateMarkup();
     this._parentElement.innerHTML = markup;
   }

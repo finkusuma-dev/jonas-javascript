@@ -6,6 +6,8 @@ import { RESULT_PER_PAGE } from '../config';
 class SearchResultsView extends View<model.Recipe[]> {
   protected override _parentElement: HTMLElement =
     document.querySelector('.results')!;
+  protected override _errorMessage: string =
+    'Recipes are not found for your query! Please try again:)';
   #paginationContainer: HTMLElement =
     document.querySelector('.pagination')!;
   #page: number = 1;
@@ -13,6 +15,10 @@ class SearchResultsView extends View<model.Recipe[]> {
   override render(data?: model.Recipe[]) {
     // console.log('render data', data);
     this._data = data ?? [];
+    if (!data || !data.length) {
+      // console.log('render error');
+      return this.renderError();
+    }
     this.renderPage(1);
   }
 
