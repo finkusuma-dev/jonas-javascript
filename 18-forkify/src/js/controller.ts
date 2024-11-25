@@ -3,7 +3,9 @@ import recipeView from './views/recipeView';
 import searchResultsView from './views/searchResultsView';
 import searchView from './views/searchView';
 
-/// typescript doesn't recognize module, so install @types/node package
+/// Typescript doesn't recognize module, so I added lib/module.d.ts.
+/// The default error message is to install @types/node package.
+/// Maybe it's better to install the recommended package then augments a new type (`hot`).
 if (module.hot) {
   module.hot.accept();
 }
