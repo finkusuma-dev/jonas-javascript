@@ -11,6 +11,8 @@ class PaginationView extends View<model.Pagination> {
     this.clear();
 
     let markup = '';
+
+    /// Previous button markup
     if (this._data.page > 1) {
       const prevBtnMarkup = `<button class="btn--inline pagination__btn--prev">
             <svg class="search__icon">
@@ -22,12 +24,14 @@ class PaginationView extends View<model.Pagination> {
       markup = prevBtnMarkup;
       //this._parentElement.insertAdjacentHTML('afterbegin', markup);
     }
+
+    /// Next button markup
     if (!this._data.isLastPage) {
       const nextBtnMarkup = `<button class="btn--inline pagination__btn--next">
+      <span>Page ${this.#getNextPage()}</span>
             <svg class="search__icon">
               <use href="${icons}#icon-arrow-right"></use>
             </svg>
-            <span>Page ${this.#getNextPage()}</span>
           </button>`;
 
       markup += nextBtnMarkup;
@@ -38,20 +42,19 @@ class PaginationView extends View<model.Pagination> {
   addHandlerPagination(
     handler: (direction: types.PageDirection) => void
   ) {
-    (
-      this._parentElement.querySelector(
-        '.pagination__btn--prev'
-      ) as HTMLElement
-    )?.addEventListener('click', () => {
-      handler('prev');
-    });
+    this._parentElement.addEventListener('click', function (e) {
+      if (!e.target) return;
 
-    (
-      this._parentElement.querySelector(
-        '.pagination__btn--next'
-      ) as HTMLElement
-    )?.addEventListener('click', () => {
-      handler('next');
+      const btn = (e.target as Element).closest('.btn--inline');
+
+      /// Prev btn click
+      if (btn?.classList.contains('pagination__btn--prev')) {
+        handler('prev');
+      }
+      /// Next btn click
+      else if (btn?.classList.contains('pagination__btn--next')) {
+        handler('next');
+      }
     });
   }
 

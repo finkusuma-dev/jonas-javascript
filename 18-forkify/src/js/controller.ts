@@ -79,12 +79,12 @@ const controlPageResults = function (
   });
 
   /// add handler pagination
-  paginationView.addHandlerPagination(controlPageResults);
 };
 
 const init = function () {
   recipeView.addHandlerRender(controlRecipe);
   searchView.addHandlerSearch(controlSearchResults);
+  paginationView.addHandlerPagination(controlPageResults);
 };
 
 init();
