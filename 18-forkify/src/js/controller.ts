@@ -67,9 +67,9 @@ const controlSearchResults = async function () {
  * @returns `controlPagination` function
  */
 const createControlPagination = function <T>(
-  renderDataCb: (page: number) => void,
+  renderDataCb: types.FnPaginationNavigate,
   paginationData: types.PaginationData<T>
-) {
+): types.FnPaginationNavigate {
   /// return paginationControl function
   return function (page: number = 1) {
     /// set state data page
@@ -83,8 +83,6 @@ const createControlPagination = function <T>(
       page: page,
       isLastPage: isLastPage(page, paginationData.data?.length ?? 0),
     });
-
-    /// add handler pagination
   };
 };
 
@@ -106,8 +104,6 @@ const createControlPagination = function <T>(
 //     page: search.page,
 //     isLastPage: isLastPage(search.page, search.results?.length ?? 0),
 //   });
-
-//   /// add handler pagination
 // };
 
 const init = function () {
