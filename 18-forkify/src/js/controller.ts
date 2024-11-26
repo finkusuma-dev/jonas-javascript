@@ -38,21 +38,18 @@ const controlSearchResults = async function () {
     await model.loadSearchResult(query);
 
     /// Render results
+    ///
+    /// create controlPagination function, save it to model.state.search
     model.state.search.controlPaginationFn =
-      createControlPagination<model.Recipe>(
-        function (page) {
-          const pageResults = model.getPaginationData(
-            model.state.search.results,
-            page
-          );
-          searchResultsView.render(pageResults);
-        },
-        {
-          page: model.state.search.page,
-          data: model.state.search.results,
-        }
-      );
+      createControlPagination<model.Recipe>(function (page) {
+        const pageResults = model.getPaginationData(
+          model.state.search.data,
+          page
+        );
+        searchResultsView.render(pageResults);
+      }, model.state.search);
 
+    /// call the control pagination function
     model.state.search.controlPaginationFn!(1);
 
     paginationView.addHandlerPagination(
@@ -65,27 +62,26 @@ const controlSearchResults = async function () {
 
 /**
  * @description Using currying to return controlPagination function.
- * @param renderDataFn Function to render data based on page number.
- * @param stateData A state variable to be accessed by the returned function.
+ * @param renderDataCb Function to render data based on page number.
+ * @param paginationData A state variable to be accessed by the returned function.
  * @returns `controlPagination` function
  */
 const createControlPagination = function <T>(
-  renderDataFn: (page: number) => void,
-  stateData: {
-    page: number;
-    data?: T[];
-  }
+  renderDataCb: (page: number) => void,
+  paginationData: types.PaginationData<T>
 ) {
+  /// return paginationControl function
   return function (page: number = 1) {
-    stateData.page = page;
+    /// set state data page
+    paginationData.page = page;
 
-    /// Render results
-    renderDataFn(page);
+    /// Render data
+    renderDataCb(page);
 
     /// Render pagination
     paginationView.render({
       page: page,
-      isLastPage: isLastPage(page, stateData.data?.length ?? 0),
+      isLastPage: isLastPage(page, paginationData.data?.length ?? 0),
     });
 
     /// add handler pagination

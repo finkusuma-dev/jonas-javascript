@@ -1,5 +1,6 @@
 import { API_URL, RESULT_PER_PAGE } from './config';
 import { getJSON } from './helpers';
+import { PaginationData, PaginationDataControl } from './lib/types';
 
 export type Pagination = {
   page: number;
@@ -22,12 +23,9 @@ export type Recipe = {
   ingredients?: Ingredient[];
 };
 
-export type Search = {
+export interface Search extends PaginationDataControl<Recipe> {
   query?: string;
-  results?: Recipe[];
-  page: number;
-  controlPaginationFn?: (page?: number) => void;
-};
+}
 
 export type State = {
   recipe?: Recipe;
@@ -37,7 +35,10 @@ export type State = {
 export const state: State = {
   recipe: undefined,
   search: {
+    query: undefined,
+    data: undefined,
     page: 1,
+    controlPaginationFn: undefined,
   },
 };
 
@@ -62,7 +63,7 @@ export const loadSearchResult = async function (query: string) {
 
     const data = await getJSON(`${API_URL}?search=${query}`);
 
-    state.search.results = data.data.recipes.map(recipe =>
+    state.search.data = data.data.recipes.map(recipe =>
       assignRecipe(recipe)
     );
   } catch (err) {
