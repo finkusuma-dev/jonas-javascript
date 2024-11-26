@@ -38,7 +38,7 @@ const controlSearchResults = async function () {
     await model.loadSearchResult(query);
 
     /// Render results
-    controlPagination(1);
+    controlPagination();
   } catch (err) {
     searchResultsView.renderError(err as string);
   }
@@ -50,14 +50,11 @@ const controlSearchResults = async function () {
  * - Prev, next: Go to previous or next page.
  * - Undefined: Do not change the page data in state.
  */
-const controlPagination = function (page: number) {
+const controlPagination = function (page: number = 1) {
   const { search } = model.state;
 
   /// Render results
-  const pageResults = model.getSearchResultsPage(
-    search.results,
-    page
-  );
+  const pageResults = model.getPaginationData(search.results, page);
   searchResultsView.render(pageResults);
 
   /// Render pagination

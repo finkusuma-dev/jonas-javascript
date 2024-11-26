@@ -58,6 +58,7 @@ export const loadRecipe = async function (id: string) {
 export const loadSearchResult = async function (query: string) {
   try {
     state.search.query = query;
+    state.search.page = 1;
 
     const data = await getJSON(`${API_URL}?search=${query}`);
 
@@ -69,16 +70,14 @@ export const loadSearchResult = async function (query: string) {
   }
 };
 
-export const getSearchResultsPage = function (
-  recipes?: Recipe[],
+export const getPaginationData = function <T>(
+  data?: T[],
   page: number = 1
-): Recipe[] {
-  state.search.page = page;
-
+): T[] {
   const start = (page - 1) * RESULT_PER_PAGE;
   const end = page * RESULT_PER_PAGE - 1;
   console.dir({ page, start, end });
-  return recipes?.slice(start, end + 1) ?? [];
+  return data?.slice(start, end + 1) ?? [];
 };
 
 const assignRecipe = function (jsonData: any): Recipe {
