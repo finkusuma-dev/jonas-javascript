@@ -38,10 +38,58 @@ const controlSearchResults = async function () {
     await model.loadSearchResult(query);
 
     /// Render results
-    controlPagination();
+    model.state.search.controlPaginationFn =
+      createControlPagination<model.Recipe>(
+        function (page) {
+          const pageResults = model.getPaginationData(
+            model.state.search.results,
+            page
+          );
+          searchResultsView.render(pageResults);
+        },
+        {
+          page: model.state.search.page,
+          data: model.state.search.results,
+        }
+      );
+
+    model.state.search.controlPaginationFn!(1);
+
+    paginationView.addHandlerPagination(
+      model.state.search.controlPaginationFn
+    );
   } catch (err) {
     searchResultsView.renderError(err as string);
   }
+};
+
+/**
+ * @description Using currying to return controlPagination function.
+ * @param renderDataFn Function to render data based on page number.
+ * @param stateData A state variable to be accessed by the returned function.
+ * @returns `controlPagination` function
+ */
+const createControlPagination = function <T>(
+  renderDataFn: (page: number) => void,
+  stateData: {
+    page: number;
+    data?: T[];
+  }
+) {
+  return function (page: number = 1) {
+    stateData.page = page;
+
+    /// Render results
+    renderDataFn(page);
+
+    /// Render pagination
+    paginationView.render({
+      page: page,
+      isLastPage: isLastPage(page, stateData.data?.length ?? 0),
+    });
+
+    /// add handler pagination
+  };
 };
 
 /**
@@ -50,26 +98,25 @@ const controlSearchResults = async function () {
  * - Prev, next: Go to previous or next page.
  * - Undefined: Do not change the page data in state.
  */
-const controlPagination = function (page: number = 1) {
-  const { search } = model.state;
+// const controlPagination = function (page: number = 1) {
+//   const { search } = model.state;
 
-  /// Render results
-  const pageResults = model.getPaginationData(search.results, page);
-  searchResultsView.render(pageResults);
+//   /// Render results
+//   const pageResults = model.getPaginationData(search.results, page);
+//   searchResultsView.render(pageResults);
 
-  /// Render pagination
-  paginationView.render({
-    page: search.page,
-    isLastPage: isLastPage(search.page, search.results?.length ?? 0),
-  });
+//   /// Render pagination
+//   paginationView.render({
+//     page: search.page,
+//     isLastPage: isLastPage(search.page, search.results?.length ?? 0),
+//   });
 
-  /// add handler pagination
-};
+//   /// add handler pagination
+// };
 
 const init = function () {
   recipeView.addHandlerRender(controlRecipe);
   searchView.addHandlerSearch(controlSearchResults);
-  paginationView.addHandlerPagination(controlPagination);
 };
 
 init();
