@@ -38,7 +38,7 @@ const controlSearchResults = async function () {
     await model.loadSearchResult(query);
 
     /// Render results
-    controlPageResults();
+    controlPagination(1);
   } catch (err) {
     searchResultsView.renderError(err as string);
   }
@@ -50,25 +50,13 @@ const controlSearchResults = async function () {
  * - Prev, next: Go to previous or next page.
  * - Undefined: Do not change the page data in state.
  */
-const controlPageResults = function (
-  direction?: types.PageDirection
-) {
+const controlPagination = function (page: number) {
   const { search } = model.state;
 
-  /// Page navigation
-  if (direction === 'prev' && search.page > 1) {
-    model.state.search.page -= 1;
-  } else if (
-    direction === 'next' &&
-    !isLastPage(search.page, search.results?.length ?? 0)
-  ) {
-    model.state.search.page += 1;
-  }
-
   /// Render results
-  const pageResults = model.getPaginationSearchResults(
+  const pageResults = model.getSearchResultsPage(
     search.results,
-    search.page
+    page
   );
   searchResultsView.render(pageResults);
 
@@ -84,7 +72,7 @@ const controlPageResults = function (
 const init = function () {
   recipeView.addHandlerRender(controlRecipe);
   searchView.addHandlerSearch(controlSearchResults);
-  paginationView.addHandlerPagination(controlPageResults);
+  paginationView.addHandlerPagination(controlPagination);
 };
 
 init();

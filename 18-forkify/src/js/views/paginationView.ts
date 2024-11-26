@@ -14,12 +14,12 @@ class PaginationView extends View<model.Pagination> {
 
     /// Previous button markup
     if (this._data.page > 1) {
-      const prevBtnMarkup = `<button class="btn--inline pagination__btn--prev">
-            <svg class="search__icon">
-              <use href="${icons}#icon-arrow-left"></use>
-            </svg>
-            <span>Page ${this.#getPrevPage()}</span>
-          </button>`;
+      const prevBtnMarkup = `<button data-goto="${this.#getPrevPage()}" class="btn--inline pagination__btn--prev">
+          <svg class="search__icon">
+            <use href="${icons}#icon-arrow-left"></use>
+          </svg>
+          <span>Page ${this.#getPrevPage()}</span>
+        </button>`;
 
       markup = prevBtnMarkup;
       //this._parentElement.insertAdjacentHTML('afterbegin', markup);
@@ -27,34 +27,34 @@ class PaginationView extends View<model.Pagination> {
 
     /// Next button markup
     if (!this._data.isLastPage) {
-      const nextBtnMarkup = `<button class="btn--inline pagination__btn--next">
-      <span>Page ${this.#getNextPage()}</span>
-            <svg class="search__icon">
-              <use href="${icons}#icon-arrow-right"></use>
-            </svg>
-          </button>`;
+      const nextBtnMarkup = `<button data-goto="${this.#getNextPage()}" class="btn--inline pagination__btn--next">
+          <span>Page ${this.#getNextPage()}</span>
+          <svg class="search__icon">
+            <use href="${icons}#icon-arrow-right"></use>
+          </svg>
+        </button>`;
 
       markup += nextBtnMarkup;
     }
     return markup;
   }
 
-  addHandlerPagination(
-    handler: (direction: types.PageDirection) => void
-  ) {
+  addHandlerPagination(handler: (page: number) => void) {
     this._parentElement.addEventListener('click', function (e) {
       if (!e.target) return;
 
-      const btn = (e.target as Element).closest('.btn--inline');
+      const btn: HTMLElement | null = (e.target as Element).closest(
+        '.btn--inline'
+      );
 
-      /// Prev btn click
-      if (btn?.classList.contains('pagination__btn--prev')) {
-        handler('prev');
-      }
-      /// Next btn click
-      else if (btn?.classList.contains('pagination__btn--next')) {
-        handler('next');
-      }
+      if (!btn) return;
+
+      const goToPage = Number.parseInt(btn.dataset.goto ?? '0');
+      console.log({ goToPage });
+
+      if (!goToPage) return;
+
+      handler(goToPage);
     });
   }
 
