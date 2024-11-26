@@ -2,11 +2,6 @@ import { API_URL, RESULT_PER_PAGE } from './config';
 import { getJSON } from './helpers';
 import { PaginationData, PaginationDataControl } from './lib/types';
 
-export type Pagination = {
-  page: number;
-  isLastPage: boolean;
-};
-
 export type Ingredient = {
   quantity: number;
   unit: string;

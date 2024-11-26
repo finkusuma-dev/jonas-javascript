@@ -79,10 +79,7 @@ const createControlPagination = function <T>(
     renderDataCb(page);
 
     /// Render pagination
-    paginationView.render({
-      page: page,
-      isLastPage: isLastPage(page, paginationData.data?.length ?? 0),
-    });
+    paginationView.render(paginationData);
   };
 };
 
