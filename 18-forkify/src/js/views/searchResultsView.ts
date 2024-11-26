@@ -8,113 +8,13 @@ class SearchResultsView extends View<model.Recipe[]> {
     document.querySelector('.results')!;
   protected override _errorMessage: string =
     'Recipes are not found for your query! Please try again:)';
-  #paginationContainer: HTMLElement =
-    document.querySelector('.pagination')!;
-  #page: number = 1;
 
-  override render(data?: model.Recipe[]) {
-    // console.log('render data', data);
-    this._data = data ?? [];
-    if (!data || !data.length) {
-      // console.log('render error');
-      return this.renderError();
-    }
-    this.renderPage(1);
-  }
-
-  renderPage(pageNumber: number) {
-    // console.log('renderPage');
-    this.#page = pageNumber;
-
-    // console.dir(
-    //   this.#getPaginationStartNumber(),
-    //   this.#getPaginationEndNumber()
-    // );
-
-    const renderResults = this._data?.slice(
-      this.#getPaginationStartNumber(),
-      this.#getPaginationEndNumber() + 1
-    );
-
-    const markup = this._generateMarkup(renderResults);
-
-    this._parentElement.innerHTML = markup;
-
-    this.#renderPagination();
-  }
-
-  #renderPagination() {
-    this.#paginationContainer.innerHTML = '';
-
-    if (!this.#isFirstPage) {
-      const markup = `<button class="btn--inline pagination__btn--prev">
-            <svg class="search__icon">
-              <use href="${icons}#icon-arrow-left"></use>
-            </svg>
-            <span>Page ${this.#getPrevPage()}</span>
-          </button>`;
-      this.#paginationContainer.insertAdjacentHTML(
-        'afterbegin',
-        markup
-      );
-      (
-        this.#paginationContainer.querySelector(
-          '.pagination__btn--prev'
-        ) as HTMLElement
-      ).addEventListener('click', () => {
-        this.renderPage(this.#getPrevPage());
-      });
-    }
-
-    if (!this.#isLastPage) {
-      const markup = `<button class="btn--inline pagination__btn--next">
-            <span>Page ${this.#getNextPage()}</span>
-            <svg class="search__icon">
-              <use href="${icons}#icon-arrow-right"></use>
-            </svg>
-          </button>`;
-      this.#paginationContainer.insertAdjacentHTML(
-        'beforeend',
-        markup
-      );
-      (
-        this.#paginationContainer.querySelector(
-          '.pagination__btn--next'
-        ) as HTMLElement
-      ).addEventListener('click', () => {
-        this.renderPage(this.#getNextPage());
-      });
-    }
-  }
-
-  get #isFirstPage(): boolean {
-    return this.#page === 1;
-  }
-
-  get #isLastPage(): boolean {
-    return this._data
-      ? this.#page === Math.ceil(this._data?.length / RESULT_PER_PAGE)
-      : true;
-  }
-
-  #getPaginationStartNumber() {
-    return (this.#page - 1) * RESULT_PER_PAGE;
-  }
-  #getPaginationEndNumber() {
-    return this.#page * RESULT_PER_PAGE - 1;
-  }
-
-  #getPrevPage(): number {
-    return this.#isFirstPage ? 1 : this.#page - 1;
-  }
-  #getNextPage(): number {
-    return this.#isLastPage ? this.#page : this.#page + 1;
-  }
-
-  protected override _generateMarkup(results?: model.Recipe[]) {
+  protected override _generateMarkup() {
+    // console.log('generateMarkup', this._data);
     return (
-      results?.map(res => this.#generateMarkupResult(res)).join('') ??
-      ''
+      this._data
+        .map(res => this.#generateMarkupResult(res))
+        .join('') ?? ''
     );
   }
 

@@ -1,5 +1,10 @@
-import { API_URL } from './config';
+import { API_URL, RESULT_PER_PAGE } from './config';
 import { getJSON } from './helpers';
+
+export type Pagination = {
+  page: number;
+  isLastPage: boolean;
+};
 
 export type Ingredient = {
   quantity: number;
@@ -20,6 +25,7 @@ export type Recipe = {
 export type Search = {
   query?: string;
   results?: Recipe[];
+  page: number;
 };
 
 export type State = {
@@ -29,7 +35,9 @@ export type State = {
 
 export const state: State = {
   recipe: undefined,
-  search: {},
+  search: {
+    page: 1,
+  },
 };
 
 export const loadRecipe = async function (id: string) {
@@ -50,6 +58,8 @@ export const loadRecipe = async function (id: string) {
 export const loadSearchResult = async function (query: string) {
   try {
     state.search.query = query;
+    state.search.page = 1;
+
     const data = await getJSON(`${API_URL}?search=${query}`);
 
     state.search.results = data.data.recipes.map(recipe =>
@@ -58,6 +68,16 @@ export const loadSearchResult = async function (query: string) {
   } catch (err) {
     throw err;
   }
+};
+
+export const getPaginationSearchResults = function (
+  recipes?: Recipe[],
+  page: number = 1
+): Recipe[] {
+  const start = (page - 1) * RESULT_PER_PAGE;
+  const end = page * RESULT_PER_PAGE - 1;
+  console.dir({ page, start, end });
+  return recipes?.slice(start, end + 1) ?? [];
 };
 
 const assignRecipe = function (jsonData: any): Recipe {

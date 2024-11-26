@@ -1,4 +1,7 @@
+import { isLastPage } from './helpers';
+import * as types from './lib/types';
 import * as model from './model';
+import paginationView from './views/paginationView';
 import recipeView from './views/recipeView';
 import searchResultsView from './views/searchResultsView';
 import searchView from './views/searchView';
@@ -30,14 +33,53 @@ const controlRecipe = async function () {
 const controlSearchResults = async function () {
   searchResultsView.renderSpinner();
   try {
+    /// Load query
     const query = searchView.getQuery();
     await model.loadSearchResult(query);
-    // console.dir(model.state.search.results);
 
-    searchResultsView.render(model.state.search.results);
+    /// Render results
+    controlPageResults();
   } catch (err) {
     searchResultsView.renderError(err as string);
   }
+};
+
+/**
+ * @description Navigate to a page, render results, and render pagination.
+ * @param Direction:
+ * - Prev, next: Go to previous or next page.
+ * - Undefined: Do not change the page data in state.
+ */
+const controlPageResults = function (
+  direction?: types.PageDirection
+) {
+  const { search } = model.state;
+
+  /// Page navigation
+  if (direction === 'prev' && search.page > 1) {
+    model.state.search.page -= 1;
+  } else if (
+    direction === 'next' &&
+    !isLastPage(search.page, search.results?.length ?? 0)
+  ) {
+    model.state.search.page += 1;
+  }
+
+  /// Render results
+  const pageResults = model.getPaginationSearchResults(
+    search.results,
+    search.page
+  );
+  searchResultsView.render(pageResults);
+
+  /// Render pagination
+  paginationView.render({
+    page: search.page,
+    isLastPage: isLastPage(search.page, search.results?.length ?? 0),
+  });
+
+  /// add handler pagination
+  paginationView.addHandlerPagination(controlPageResults);
 };
 
 const init = function () {
