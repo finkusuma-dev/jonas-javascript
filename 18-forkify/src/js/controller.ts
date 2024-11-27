@@ -37,22 +37,21 @@ const controlSearchResults = async function () {
     const query = searchView.getQuery();
     await model.loadSearchResult(query);
 
-    /// Render results
-    ///
-    /// create controlPagination function, save it to model.state.search
-    model.state.search.controlPaginationFn =
-      createControlPagination<model.Recipe>(function (page) {
-        const pageResults = model.getPaginationData(
-          model.state.search.data,
-          page
+    /// Assign controlPagination function to model.state.search. Bind the required variables.
+    model.state.search.controlPaginationFn = controlPagination.bind({
+      renderItemsCallback: function (page) {
+        searchResultsView.render(
+          model.getPaginateItems(model.state.search.items, page)
         );
-        searchResultsView.render(pageResults);
-      }, model.state.search);
+      },
+      dataState: model.state.search,
+    });
 
-    /// call the control pagination function
+    /// Call the control pagination function to render results & pagination
     model.state.search.controlPaginationFn!(1);
 
-    paginationView.addHandlerPagination(
+    /// Add pagination click handler
+    paginationView.addHandlerClick(
       model.state.search.controlPaginationFn
     );
   } catch (err) {
@@ -60,48 +59,42 @@ const controlSearchResults = async function () {
   }
 };
 
-/**
- * @description Using currying to return controlPagination function.
- * @param renderDataCb Function to render data based on page number.
- * @param paginationData A state variable to be accessed by the returned function.
- * @returns `controlPagination` function
- */
-const createControlPagination = function <T>(
-  renderDataCb: types.FnPaginationNavigate,
-  paginationData: types.PaginationData<T>
-): types.FnPaginationNavigate {
-  /// return paginationControl function
-  return function (page: number = 1) {
-    /// set state data page
-    paginationData.page = page;
-
-    /// Render data
-    renderDataCb(page);
-
-    /// Render pagination
-    paginationView.render(paginationData);
-  };
-};
-
-/**
- * @description Navigate to a page, render results, and render pagination.
- * @param Direction:
- * - Prev, next: Go to previous or next page.
- * - Undefined: Do not change the page data in state.
- */
-// const controlPagination = function (page: number = 1) {
-//   const { search } = model.state;
-
-//   /// Render results
-//   const pageResults = model.getPaginationData(search.results, page);
-//   searchResultsView.render(pageResults);
-
-//   /// Render pagination
-//   paginationView.render({
-//     page: search.page,
-//     isLastPage: isLastPage(search.page, search.results?.length ?? 0),
+// /**
+//  * @description Using currying to return controlPagination function.
+//  * @param renderItemsCallback Function to render data based on page number.
+//  * @param dataState A state variable to be accessed by the returned function.
+//  * @returns `controlPagination` function
+//  */
+// const createControlPagination = function <T>(
+//   renderItemsCallback: types.PageFn,
+//   dataState: types.PaginateData<T>
+// ): types.PageFn {
+//   /// return paginationControl function
+//   return controlPagination.bind({
+//     renderItemsCallback,
+//     dataState,
 //   });
 // };
+
+/**
+ * @description Update the page state, render items and pagination on a page.
+ */
+const controlPagination = function <T>(
+  this: {
+    renderItemsCallback: types.PageFn;
+    dataState: types.PaginateData<T>;
+  },
+  page: number = 1
+) {
+  /// Update page (state)
+  this.dataState.page = page;
+
+  /// Render items on page
+  this.renderItemsCallback(page);
+
+  /// Render pagination
+  paginationView.render(this.dataState);
+};
 
 const init = function () {
   recipeView.addHandlerRender(controlRecipe);

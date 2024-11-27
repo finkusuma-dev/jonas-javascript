@@ -4,7 +4,7 @@ import * as model from '../model';
 import View from './View';
 import { RESULT_PER_PAGE } from '../config';
 
-class PaginationView extends View<types.PaginationData<unknown>> {
+class PaginationView extends View<types.PaginateData<unknown>> {
   protected override _parentElement: HTMLElement =
     document.querySelector('.pagination')!;
 
@@ -44,7 +44,7 @@ class PaginationView extends View<types.PaginationData<unknown>> {
     return markup;
   }
 
-  addHandlerPagination(handler: (page: number) => void) {
+  addHandlerClick(handler: (page: number) => void) {
     this._parentElement.addEventListener('click', function (e) {
       if (!e.target) return;
 
@@ -76,8 +76,8 @@ class PaginationView extends View<types.PaginationData<unknown>> {
   }
 
   get #isLastPage() {
-    return this._data.data
-      ? Math.ceil(this._data.data?.length / RESULT_PER_PAGE) ===
+    return this._data.items
+      ? Math.ceil(this._data.items?.length / RESULT_PER_PAGE) ===
           this._data.page
       : true;
   }

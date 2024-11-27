@@ -1,6 +1,6 @@
 import { API_URL, RESULT_PER_PAGE } from './config';
 import { getJSON } from './helpers';
-import { PaginationData, PaginationDataControl } from './lib/types';
+import { PaginateDataControl } from './lib/types';
 
 export type Ingredient = {
   quantity: number;
@@ -18,9 +18,7 @@ export type Recipe = {
   ingredients?: Ingredient[];
 };
 
-export interface Search extends PaginationDataControl<Recipe> {
-  query?: string;
-}
+export type Search = PaginateDataControl<Recipe> & { query?: string };
 
 export type State = {
   recipe?: Recipe;
@@ -31,7 +29,7 @@ export const state: State = {
   recipe: undefined,
   search: {
     query: undefined,
-    data: undefined,
+    items: undefined,
     page: 1,
     controlPaginationFn: undefined,
   },
@@ -58,22 +56,23 @@ export const loadSearchResult = async function (query: string) {
 
     const data = await getJSON(`${API_URL}?search=${query}`);
 
-    state.search.data = data.data.recipes.map(recipe =>
+    state.search.items = data.data.recipes.map(recipe =>
       assignRecipe(recipe)
     );
+    console.log('data length', state.search.items?.length ?? 0);
   } catch (err) {
     throw err;
   }
 };
 
-export const getPaginationData = function <T>(
-  data?: T[],
+export const getPaginateItems = function <T>(
+  allItems?: T[],
   page: number = 1
 ): T[] {
   const start = (page - 1) * RESULT_PER_PAGE;
   const end = page * RESULT_PER_PAGE - 1;
   console.dir({ page, start, end });
-  return data?.slice(start, end + 1) ?? [];
+  return allItems?.slice(start, end + 1) ?? [];
 };
 
 const assignRecipe = function (jsonData: any): Recipe {

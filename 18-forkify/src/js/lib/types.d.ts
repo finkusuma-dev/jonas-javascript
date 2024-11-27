@@ -1,11 +1,10 @@
-export type PageDirection = 'prev' | 'next';
+export type PageFn = (page?: number) => void;
 
-export type FnPaginationNavigate = (page?: number) => void;
-
-export interface PaginationData<T> {
-  data?: T[];
+export type PaginateData<T> = {
+  items?: T[];
   page: number;
-}
-export interface PaginationDataControl<T> extends PaginationData<T> {
-  controlPaginationFn?: FnPaginationNavigate;
-}
+};
+
+export type PaginateDataControl<T> = PaginateData<T> & {
+  controlPaginationFn?: PageFn;
+};
