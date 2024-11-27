@@ -54,8 +54,7 @@ class PaginationView extends View<types.PaginateData<unknown>> {
 
       if (!btn) return;
 
-      const goToPage = Number.parseInt(btn.dataset.goto ?? '0');
-      console.log({ goToPage });
+      const goToPage = +(btn.dataset.goto ?? '0');
 
       if (!goToPage) return;
 
