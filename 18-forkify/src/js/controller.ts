@@ -25,9 +25,20 @@ const controlRecipe = async function () {
     }
     await model.loadRecipe(hashId);
     recipeView.render(model.state.recipe!);
+
+    /// handler Change Servings
+    recipeView.addHandlerChangeServings(controlRecipeServings);
   } catch (err) {
     recipeView.renderError();
   }
+};
+
+const controlRecipeServings = function (newServings: number) {
+  console.log('controlRecipeServings amount', newServings);
+  model.updateRecipeServings(newServings);
+
+  recipeView.render(model.state.recipe!);
+  recipeView.addHandlerChangeServings(controlRecipeServings);
 };
 
 const controlSearchResults = async function () {
