@@ -34,11 +34,11 @@ const controlRecipe = async function () {
 };
 
 const controlRecipeServings = function (newServings: number) {
-  console.log('controlRecipeServings amount', newServings);
+  // console.log('controlRecipeServings amount', newServings);
   model.updateRecipeServings(newServings);
 
-  recipeView.render(model.state.recipe!);
-  recipeView.addHandlerChangeServings(controlRecipeServings);
+  recipeView.update(model.state.recipe!);
+  // recipeView.renderServings(model.state.recipe!);
 };
 
 const controlSearchResults = async function () {

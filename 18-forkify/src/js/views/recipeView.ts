@@ -44,6 +44,89 @@ class RecipeView extends View<model.Recipe> {
       });
   }
 
+  /**
+   * @description Generate the new markup, convert it to html elements. Copy the elements that are different to the current elements.
+   */
+  update(data: model.Recipe) {
+    this._data = data ?? ({} as model.Recipe);
+    if (!data || (Array.isArray(data) && !data.length)) {
+      return this.renderError();
+    }
+    const newMarkup = this._generateMarkup();
+
+    /// Create DOM using newMarkup
+    const newDOM = document
+      .createRange()
+      .createContextualFragment(newMarkup);
+
+    /// List the new elements from the newDOM
+    const newElements = Array.from(newDOM.querySelectorAll('*'));
+    // console.log({ newElements });
+
+    /// List current elements
+    const curElements = Array.from(
+      this._parentElement.querySelectorAll('*')
+    );
+    // console.log({ curElements });
+
+    /// Compare the new elements with current elements
+    newElements.forEach((newEl, i) => {
+      const curEl = curElements[i];
+
+      /// Process if the elements are different
+      if (!newEl.isEqualNode(curEl)) {
+        /// === Copy text ===
+        /// Set elements' textContent for elements that only text node.
+        /// How we check if it's text node if the nodeValue returns non empty value.
+        if ((newEl as Element).firstChild?.nodeValue?.trim() !== '') {
+          curEl.textContent = newEl.textContent;
+        }
+        /// === Copy data attributes ===
+        /// Set attributes of current elements to new elements
+        Array.from((newEl as Element).attributes).forEach(attr =>
+          curEl.setAttribute(attr.name, attr.value)
+        );
+      }
+    });
+  }
+
+  renderServings(data: model.Recipe) {
+    this._data = data;
+
+    /// Render servings
+    const servingsEl = this._parentElement.querySelector<HTMLElement>(
+      '.recipe__info-data--people'
+    )!;
+    servingsEl.textContent = this._data.servings!.toString();
+
+    /// Render ingredients
+    const ingredientsContainer = this._parentElement.querySelector(
+      '.recipe__ingredient-list'
+    )!;
+
+    ingredientsContainer.innerHTML = this._data
+      .ingredients!.map(ing => this.#generateMarkupIngredient(ing))
+      .join('');
+
+    /// Update buttons dataset
+    const btns = this._parentElement.querySelectorAll<HTMLElement>(
+      '.btn--update-servings'
+    );
+
+    btns.forEach(btn => {
+      // btn.dataset.updateTo = '1';
+      if (btn.classList.contains('btn--decrease-servings')) {
+        btn.dataset.updateTo =
+          this._data.servings! > 1
+            ? (this._data.servings! - 1).toString()
+            : '1';
+      }
+      if (btn.classList.contains('btn--increase-servings')) {
+        btn.dataset.updateTo = (this._data.servings! + 1).toString();
+      }
+    });
+  }
+
   protected override _generateMarkup() {
     return `
     <figure class="recipe__fig">
@@ -75,7 +158,7 @@ class RecipeView extends View<model.Recipe> {
           <span class="recipe__info-text">servings</span>
 
           <div class="recipe__info-buttons">
-            <button class="btn--tiny btn--update-servings" data-update-to="${
+            <button class="btn--tiny btn--update-servings btn--decrease-servings" data-update-to="${
               this._data.servings! > 1
                 ? this._data.servings! - 1
                 : this._data.servings!
@@ -84,7 +167,7 @@ class RecipeView extends View<model.Recipe> {
                 <use href="${icons}#icon-minus-circle"></use>
               </svg>
             </button>
-            <button class="btn--tiny btn--update-servings" data-update-to="${
+            <button class="btn--tiny btn--update-servings btn--increase-servings" data-update-to="${
               this._data.servings! + 1
             }">
               <svg>
