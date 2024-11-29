@@ -14,15 +14,22 @@ if (module.hot) {
 }
 
 const controlRecipe = async function () {
-  recipeView.renderSpinner();
   try {
     const hashId = window.location.hash.slice(1);
 
-    // console.dir(hashId);
     if (!hashId) {
       recipeView.renderMessage();
       return;
     }
+    recipeView.renderSpinner();
+
+    /// Update the active search result item
+    /* 1. */ searchResultsView.update(model.getPaginateRecipes());
+    // 2. searchResultsView.renderActiveResult();
+    // 3. searchResultsView.render(
+    //   model.getPaginateRecipes()
+    // );
+
     await model.loadRecipe(hashId);
     recipeView.render(model.state.recipe!);
 
@@ -51,9 +58,7 @@ const controlSearchResults = async function () {
     /// Assign controlPagination function to model.state.search. Bind the required variables.
     model.state.search.controlPaginationFn = controlPagination.bind({
       renderItemsCallback: function (page) {
-        searchResultsView.render(
-          model.getPaginateItems(model.state.search.items, page)
-        );
+        searchResultsView.render(model.getPaginateRecipes(page));
       },
       dataState: model.state.search,
     });

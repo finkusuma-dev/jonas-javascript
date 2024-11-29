@@ -77,9 +77,15 @@ export const loadSearchResult = async function (query: string) {
   }
 };
 
+export const getPaginateRecipes = function (
+  page: number = state.search.page
+): Recipe[] {
+  return getPaginateItems(state.search.items, page);
+};
+
 export const getPaginateItems = function <T>(
   allItems?: T[],
-  page: number = 1
+  page: number = state.search.page
 ): T[] {
   const start = (page - 1) * RESULT_PER_PAGE;
   const end = page * RESULT_PER_PAGE - 1;
