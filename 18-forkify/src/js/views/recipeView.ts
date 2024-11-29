@@ -44,52 +44,6 @@ class RecipeView extends View<model.Recipe> {
       });
   }
 
-  /**
-   * @description Generate the new markup, convert it to html elements. Copy the elements that are different to the current elements.
-   */
-  update(data: model.Recipe) {
-    this._data = data ?? ({} as model.Recipe);
-    if (!data || (Array.isArray(data) && !data.length)) {
-      return this.renderError();
-    }
-    const newMarkup = this._generateMarkup();
-
-    /// Create DOM using newMarkup
-    const newDOM = document
-      .createRange()
-      .createContextualFragment(newMarkup);
-
-    /// List the new elements from the newDOM
-    const newElements = Array.from(newDOM.querySelectorAll('*'));
-    // console.log({ newElements });
-
-    /// List current elements
-    const curElements = Array.from(
-      this._parentElement.querySelectorAll('*')
-    );
-    // console.log({ curElements });
-
-    /// Compare the new elements with current elements
-    newElements.forEach((newEl, i) => {
-      const curEl = curElements[i];
-
-      /// Process if the elements are different
-      if (!newEl.isEqualNode(curEl)) {
-        /// === Copy text ===
-        /// Set elements' textContent for elements that only text node.
-        /// How we check if it's text node if the nodeValue returns non empty value.
-        if ((newEl as Element).firstChild?.nodeValue?.trim() !== '') {
-          curEl.textContent = newEl.textContent;
-        }
-        /// === Copy data attributes ===
-        /// Set attributes of current elements to new elements
-        Array.from((newEl as Element).attributes).forEach(attr =>
-          curEl.setAttribute(attr.name, attr.value)
-        );
-      }
-    });
-  }
-
   renderServings(data: model.Recipe) {
     this._data = data;
 
