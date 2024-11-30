@@ -1,6 +1,7 @@
 import { API_URL, RESULT_PER_PAGE } from './config';
 import { getJSON } from './helpers';
 import { PaginateDataControl } from './lib/types';
+import recipeView from './views/recipeView';
 
 export type Ingredient = {
   quantity: number;
@@ -16,16 +17,19 @@ export type Recipe = {
   servings?: number;
   cookingTime?: number;
   ingredients?: Ingredient[];
+  bookmarked: boolean;
 };
 
 export type Search = PaginateDataControl<Recipe> & { query?: string };
 
 export type State = {
   recipe?: Recipe;
+  bookmarks: Recipe[];
   search: Search;
 };
 
 export const state: State = {
+  bookmarks: [],
   recipe: undefined,
   search: {
     query: undefined,
@@ -83,13 +87,50 @@ export const getPaginateRecipes = function (
   return getPaginateItems(state.search.items, page);
 };
 
+export const toggleBookmark = function () {
+  if (!state.recipe) return;
+
+  const bookmarked = state.bookmarks.find(
+    bookmark => bookmark.id === state.recipe!.id
+  );
+
+  if (bookmarked) {
+    console.log('Remove recipe from bookmarks');
+
+    const idx = state.bookmarks.findIndex(
+      bookmark => bookmark.id == state.recipe?.id
+    );
+
+    if (idx < 0) return;
+
+    state.bookmarks.splice(idx, 1);
+  } else {
+    console.log('Add recipe to bookmarks');
+    state.bookmarks.push(state.recipe);
+  }
+
+  state.recipe.bookmarked = !state.recipe.bookmarked;
+
+  saveBookmarks();
+};
+
+export const saveBookmarks = function () {
+  localStorage.setItem('bookmarks', JSON.stringify(state.bookmarks));
+};
+
+export const loadBookmarks = function () {
+  const strBookmarks = localStorage.getItem('bookmarks');
+  if (!strBookmarks) return;
+  state.bookmarks = JSON.parse(strBookmarks);
+};
+
 export const getPaginateItems = function <T>(
   allItems?: T[],
   page: number = state.search.page
 ): T[] {
   const start = (page - 1) * RESULT_PER_PAGE;
   const end = page * RESULT_PER_PAGE - 1;
-  console.dir({ page, start, end });
+  // console.dir({ page, start, end });
   return allItems?.slice(start, end + 1) ?? [];
 };
 
@@ -103,5 +144,8 @@ const assignRecipe = function (jsonData: any): Recipe {
     servings: jsonData.servings,
     cookingTime: jsonData.cooking_time,
     ingredients: jsonData.ingredients,
+    bookmarked: state.bookmarks.some(
+      bookmark => bookmark.id === jsonData.id
+    ),
   };
 };

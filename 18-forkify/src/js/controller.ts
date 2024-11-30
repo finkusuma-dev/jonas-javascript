@@ -1,6 +1,7 @@
 import { isLastPage } from './helpers';
 import * as types from './lib/types';
 import * as model from './model';
+import bookmarksView from './views/bookmarksView';
 import paginationView from './views/paginationView';
 import recipeView from './views/recipeView';
 import searchResultsView from './views/searchResultsView';
@@ -9,9 +10,9 @@ import searchView from './views/searchView';
 /// Typescript doesn't recognize module, so I added lib/module.d.ts.
 /// After installing `@types/node` package, I added HMR types to NodeModule interface,
 /// which is the interface for module.
-if (module.hot) {
-  module.hot.accept();
-}
+// if (module.hot) {
+//   module.hot.accept();
+// }
 
 const controlRecipe = async function () {
   try {
@@ -33,8 +34,12 @@ const controlRecipe = async function () {
     await model.loadRecipe(hashId);
     recipeView.render(model.state.recipe!);
 
-    /// handler Change Servings
+    /// handle Change Servings
     recipeView.addHandlerChangeServings(controlRecipeServings);
+    /// handle bookmark
+    recipeView.addHandlerBookmark(controlBookmarks);
+    /// update active bookmarks in bookmarksView
+    bookmarksView.update(model.state.bookmarks);
   } catch (err) {
     recipeView.renderError();
   }
@@ -112,9 +117,33 @@ const controlPagination = function <T>(
   paginationView.render(this.dataState);
 };
 
+export type ControlBookmarkFn = typeof controlBookmarks;
+/**
+ * @param init Optional param.
+ * - true: Init the bookmark. Load from localStorage.
+ * - false (default): Toggle the bookmark of the current recipe.
+ */
+const controlBookmarks = function (init: boolean = false) {
+  if (init) {
+    console.log('init bookmarks');
+    model.loadBookmarks();
+  } else {
+    console.log('toggle bookmarks');
+    model.toggleBookmark();
+    recipeView.update(model.state.recipe);
+  }
+
+  if (!model.state.bookmarks.length) {
+    return bookmarksView.renderMessage();
+  }
+
+  bookmarksView.render(model.state.bookmarks);
+};
+
 const init = function () {
   recipeView.addHandlerRender(controlRecipe);
   searchView.addHandlerSearch(controlSearchResults);
+  bookmarksView.addHandlerRender(controlBookmarks);
 };
 
 init();

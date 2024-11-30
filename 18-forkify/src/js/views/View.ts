@@ -51,11 +51,8 @@ export default class View<T> {
   /**
    * @description Generate the new markup, convert it to html elements. Copy the elements that are different to the current elements.
    */
-  update(data: T) {
+  update(data?: T) {
     this._data = data ?? ({} as T);
-    if (!data || (Array.isArray(data) && !data.length)) {
-      return; //this.renderError();
-    }
 
     const newMarkup = this._generateMarkup();
 

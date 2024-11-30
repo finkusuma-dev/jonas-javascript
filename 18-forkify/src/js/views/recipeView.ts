@@ -3,6 +3,7 @@ import icons from 'url:../../img/icons.svg'; /// parcel v2 => icons = path to th
 import fracty from 'fracty';
 import * as model from '../model';
 import View from './View';
+import { ControlBookmarkFn } from '../controller';
 
 const securityElement = document.createElement('div');
 /// Security function
@@ -24,6 +25,16 @@ class RecipeView extends View<model.Recipe> {
     ['hashchange', 'load'].forEach(ev => {
       window.addEventListener(ev, handler);
     });
+  }
+
+  addHandlerBookmark(handler: ControlBookmarkFn) {
+    console.log('addHandlerBookmark');
+    this._parentElement
+      .querySelector<HTMLElement>('.btn--bookmark')!
+      .addEventListener('click', () => {
+        console.log('Bookmark btn click');
+        handler();
+      });
   }
 
   addHandlerChangeServings(handler: (newServings: number) => void) {
@@ -136,9 +147,11 @@ class RecipeView extends View<model.Recipe> {
             <use href="${icons}#icon-user"></use>
           </svg>
         </div>
-        <button class="btn--round">
+        <button class="btn--round btn--bookmark">
           <svg class="">
-            <use href="${icons}#icon-bookmark-fill"></use>
+            <use href="${icons}#icon-bookmark${
+      this._data.bookmarked ? '-fill' : ''
+    }"></use>
           </svg>
         </button>
       </div>
