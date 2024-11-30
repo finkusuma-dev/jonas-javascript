@@ -1,7 +1,6 @@
 import { API_URL, RESULT_PER_PAGE } from './config';
 import { getJSON } from './helpers';
-import { PaginateDataControl } from './lib/types';
-import recipeView from './views/recipeView';
+import type { PaginateDataControl } from './lib/types';
 
 export type Ingredient = {
   quantity: number;

@@ -1,5 +1,5 @@
 import { isLastPage } from './helpers';
-import * as types from './lib/types';
+import type { PageFn, PaginateData } from './lib/types';
 import * as model from './model';
 import bookmarksView from './views/bookmarksView';
 import paginationView from './views/paginationView';
@@ -102,8 +102,8 @@ const controlSearchResults = async function () {
  */
 const controlPagination = function <T>(
   this: {
-    renderItemsCallback: types.PageFn;
-    dataState: types.PaginateData<T>;
+    renderItemsCallback: PageFn;
+    dataState: PaginateData<T>;
   },
   page: number = 1
 ) {

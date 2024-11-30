@@ -1,10 +1,9 @@
 import icons from 'url:../../img/icons.svg';
-import * as types from '../lib/types';
-import * as model from '../model';
+import type { PaginateData } from '../lib/types';
 import View from './View';
 import { RESULT_PER_PAGE } from '../config';
 
-class PaginationView extends View<types.PaginateData<unknown>> {
+class PaginationView extends View<PaginateData<unknown>> {
   protected override _parentElement: HTMLElement =
     document.querySelector('.pagination')!;
 

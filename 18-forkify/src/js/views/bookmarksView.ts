@@ -1,7 +1,7 @@
 import icons from 'url:../../img/icons.svg';
 import * as model from '../model';
 import View from './View';
-import { ControlBookmarkFn } from '../controller';
+import { type ControlBookmarkFn } from '../controller';
 
 class BookmarksView extends View<model.Recipe[]> {
   protected override _parentElement: HTMLElement =
