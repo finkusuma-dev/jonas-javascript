@@ -1,4 +1,4 @@
-export type PageFn = (page?: number) => void;
+export type ControlPaginationFn = (page?: number) => void;
 
 export type PaginateData<T> = {
   items?: T[];
@@ -6,5 +6,5 @@ export type PaginateData<T> = {
 };
 
 export type PaginateDataControl<T> = PaginateData<T> & {
-  controlPaginationFn?: PageFn;
+  controlPaginationFn?: ControlPaginationFn;
 };

@@ -1,5 +1,5 @@
 import { isLastPage } from './helpers';
-import type { PageFn, PaginateData } from './lib/types';
+import type { ControlPaginationFn, PaginateData } from './lib/types';
 import * as model from './model';
 import bookmarksView from './views/bookmarksView';
 import paginationView from './views/paginationView';
@@ -45,6 +45,10 @@ const controlRecipe = async function () {
   }
 };
 
+export type ControlRecipeServingsFn = typeof controlRecipeServings;
+/**
+ * @description Control handler for updating recipe servings
+ */
 const controlRecipeServings = function (newServings: number) {
   // console.log('controlRecipeServings amount', newServings);
   model.updateRecipeServings(newServings);
@@ -102,7 +106,7 @@ const controlSearchResults = async function () {
  */
 const controlPagination = function <T>(
   this: {
-    renderItemsCallback: PageFn;
+    renderItemsCallback: ControlPaginationFn;
     dataState: PaginateData<T>;
   },
   page: number = 1
