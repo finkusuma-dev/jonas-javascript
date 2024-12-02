@@ -11,7 +11,9 @@ class BookmarksView extends View<model.Recipe[]> {
   protected override _defaultMessage: string =
     'No bookmarks yet. Find a nice recipe and bookmark it :)';
 
-  protected override _generateMarkup(): string {
+  protected override _generateMarkup() {
+    if (!this._data) return '';
+
     return this._data
       .map(bookmark => RecipePreview.render(bookmark))
       .join('');

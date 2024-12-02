@@ -2,12 +2,13 @@ import icons from 'url:../../img/icons.svg';
 
 export default class View<T> {
   protected _parentElement: HTMLElement = {} as HTMLElement;
-  protected _data: T = {} as T;
+  protected _data?: T = {} as T;
   protected _errorMessage: string = 'Error';
   protected _defaultMessage: string = 'This is default message';
 
   render(data?: T) {
-    this._data = data ?? ({} as T);
+    this._data = data;
+
     if (!data || (Array.isArray(data) && !data.length)) {
       return this.renderError();
     }
@@ -52,7 +53,9 @@ export default class View<T> {
    * @description Generate the new markup, convert it to html elements. Copy the elements that are different to the current elements.
    */
   update(data?: T) {
-    this._data = data ?? ({} as T);
+    if (!data) return;
+
+    this._data = data;
 
     const newMarkup = this._generateMarkup();
 

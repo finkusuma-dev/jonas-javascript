@@ -85,17 +85,19 @@ class RecipeView extends View<model.Recipe> {
       // btn.dataset.updateTo = '1';
       if (btn.classList.contains('btn--decrease-servings')) {
         btn.dataset.updateTo =
-          this._data.servings! > 1
-            ? (this._data.servings! - 1).toString()
+          this._data!.servings! > 1
+            ? (this._data!.servings! - 1).toString()
             : '1';
       }
       if (btn.classList.contains('btn--increase-servings')) {
-        btn.dataset.updateTo = (this._data.servings! + 1).toString();
+        btn.dataset.updateTo = (this._data!.servings! + 1).toString();
       }
     });
   }
 
   protected override _generateMarkup() {
+    if (!this._data) return '';
+
     return `
     <figure class="recipe__fig">
         <img src="${

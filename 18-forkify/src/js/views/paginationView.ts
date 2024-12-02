@@ -62,18 +62,22 @@ class PaginationView extends View<PaginateData<unknown>> {
   }
 
   get #prevPage() {
+    if (!this._data) return;
     return !this.#isFirstPage ? this._data.page - 1 : 1;
   }
 
   get #nextPage() {
+    if (!this._data) return;
     return !this.#isLastPage ? this._data.page + 1 : this._data.page;
   }
 
   get #isFirstPage() {
+    if (!this._data) return;
     return this._data.page === 1;
   }
 
   get #isLastPage() {
+    if (!this._data) return;
     return this._data.items
       ? Math.ceil(this._data.items?.length / RESULT_PER_PAGE) ===
           this._data.page

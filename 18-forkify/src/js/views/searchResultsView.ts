@@ -10,7 +10,7 @@ class SearchResultsView extends View<model.Recipe[]> {
     'Recipes are not found for your query! Please try again:)';
 
   protected override _generateMarkup() {
-    // console.log('generateMarkup', this._data);
+    if (!this._data) return '';
     return (
       this._data.map(res => RecipePreview.render(res)).join('') ?? ''
     );
