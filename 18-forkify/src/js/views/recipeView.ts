@@ -36,7 +36,7 @@ class RecipeView extends View<model.Recipe> {
       .querySelector<HTMLElement>('.btn--bookmark')!
       .addEventListener('click', () => {
         console.log('Bookmark btn click');
-        handler();
+        handler(true);
       });
   }
 

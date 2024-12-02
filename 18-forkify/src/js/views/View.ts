@@ -66,13 +66,13 @@ export default class View<T> {
 
     /// List the new elements from the newDOM
     const newElements = Array.from(newDOM.querySelectorAll('*'));
-    // console.log({ newElements });
 
     /// List current elements
     const curElements = Array.from(
       this._parentElement.querySelectorAll('*')
     );
-    // console.log({ curElements });
+
+    if (newElements.length !== curElements.length) return;
 
     /// Compare the new elements with current elements
     newElements.forEach((newEl, i) => {

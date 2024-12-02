@@ -41,6 +41,7 @@ const controlRecipe = async function () {
     /// update active bookmarks in bookmarksView
     bookmarksView.update(model.state.bookmarks);
   } catch (err) {
+    console.error(err);
     recipeView.renderError();
   }
 };
@@ -127,11 +128,8 @@ export type ControlBookmarkFn = typeof controlBookmarks;
  * - true: Init the bookmark. Load from localStorage.
  * - false (default): Toggle the bookmark of the current recipe.
  */
-const controlBookmarks = function (init: boolean = false) {
-  if (init) {
-    console.log('init bookmarks');
-    model.loadBookmarks();
-  } else {
+const controlBookmarks = function (toggle: boolean = true) {
+  if (toggle) {
     console.log('toggle bookmarks');
     model.toggleBookmark();
     recipeView.update(model.state.recipe);

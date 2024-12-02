@@ -148,3 +148,9 @@ const assignRecipe = function (jsonData: any): Recipe {
     ),
   };
 };
+
+const init = function () {
+  loadBookmarks();
+};
+
+init();
