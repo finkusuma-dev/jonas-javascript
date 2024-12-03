@@ -34,10 +34,6 @@ const controlRecipe = async function () {
     await model.loadRecipe(hashId);
     recipeView.render(model.state.recipe!);
 
-    /// handle Change Servings
-    recipeView.addHandlerChangeServings(controlRecipeServings);
-    /// handle bookmark
-    recipeView.addHandlerBookmark(controlBookmarks);
     /// update active bookmarks in bookmarksView
     bookmarksView.update(model.state.bookmarks);
   } catch (err) {
@@ -144,6 +140,8 @@ const controlBookmarks = function (toggle: boolean = true) {
 
 const init = function () {
   recipeView.addHandlerRender(controlRecipe);
+  recipeView.addHandlerChangeServings(controlRecipeServings);
+  recipeView.addHandlerBookmark(controlBookmarks);
   searchView.addHandlerSearch(controlSearchResults);
   bookmarksView.addHandlerRender(controlBookmarks);
 };

@@ -33,16 +33,23 @@ class RecipeView extends View<model.Recipe> {
   addHandlerBookmark(handler: ControlBookmarkFn) {
     console.log('addHandlerBookmark');
     this._parentElement
-      .querySelector<HTMLElement>('.btn--bookmark')!
-      .addEventListener('click', () => {
+      // .querySelector<HTMLElement>('.btn--bookmark')!
+      .addEventListener('click', e => {
         console.log('Bookmark btn click');
+        if (!e.target) return;
+
+        const btn = (e.target as Element).closest<HTMLElement>(
+          '.btn--bookmark'
+        );
+        if (!btn) return;
+
         handler(true);
       });
   }
 
   addHandlerChangeServings(handler: ControlRecipeServingsFn) {
     this._parentElement
-      .querySelector<HTMLElement>('.recipe__info-buttons')!
+      // .querySelector<HTMLElement>('.recipe__info-buttons')!
       .addEventListener('click', e => {
         if (!e.target) return;
 
