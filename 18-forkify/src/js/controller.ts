@@ -124,7 +124,7 @@ export type ControlBookmarkFn = typeof controlBookmarks;
  * - true: Init the bookmark. Load from localStorage.
  * - false (default): Toggle the bookmark of the current recipe.
  */
-const controlBookmarks = function (toggle: boolean = true) {
+const controlBookmarks = function (toggle: boolean = false) {
   if (toggle) {
     console.log('toggle bookmarks');
     model.toggleBookmark();
