@@ -17,6 +17,7 @@ export type Recipe = {
   cookingTime?: number;
   ingredients?: Ingredient[];
   bookmarked: boolean;
+  key?: string;
 };
 
 export type Search = PaginateDataControl<Recipe> & { query?: string };
@@ -76,7 +77,8 @@ export const loadSearchResult = async function (query: string) {
     state.search.items = data.data.recipes.map(recipe =>
       assignRecipe(recipe)
     );
-    console.log('data length', state.search.items?.length ?? 0);
+    // console.log('items length', state.search.items?.length ?? 0);
+    // console.log('items', state.search.items);
   } catch (err) {
     throw err;
   }
@@ -214,6 +216,7 @@ const assignRecipe = function (jsonData: any): Recipe {
     bookmarked: state.bookmarks.some(
       bookmark => bookmark.id === jsonData.id
     ),
+    ...(jsonData.key && { key: jsonData.key }),
   };
 };
 
