@@ -152,14 +152,17 @@ const controlSubmitRecipe = async function (e: SubmitEvent) {
     addRecipeView.renderBusy();
     try {
       const res = await model.uploadRecipe(recipeEntries);
-      const recipe = res.data.recipe;
+      const recipe: model.Recipe = res.data.recipe;
 
-      // Add recipe to bookmark
-      model.addBookmark(recipe);
-      bookmarksView.render(model.state.bookmarks);
+      // Change URL without reloading the page
+      history.pushState(null, '', `#${recipe.id}`);
 
-      // Change URL to show the recipe
-      window.location.hash = `#${recipe.id}`;
+      // Update recipe state
+      model.state.recipe = recipe;
+      recipeView.render(model.state.recipe);
+
+      // Add current recipe to bookmarks
+      controlBookmarks(true);
     } finally {
       addRecipeView.renderBusy(false);
     }
