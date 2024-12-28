@@ -2,6 +2,7 @@ import { isLastPage } from './helpers';
 import type { ControlPaginationFn, PaginateData } from './lib/types';
 import * as model from './model';
 import bookmarksView from './views/bookmarksView';
+import addRecipeView from './views/addRecipeView';
 import paginationView from './views/paginationView';
 import recipeView from './views/recipeView';
 import searchResultsView from './views/searchResultsView';
@@ -131,11 +132,42 @@ const controlBookmarks = function (toggle: boolean = false) {
     recipeView.update(model.state.recipe);
   }
 
+  /// Render message if there are no bookmarks
   if (!model.state.bookmarks.length) {
     return bookmarksView.renderMessage();
   }
 
   bookmarksView.render(model.state.bookmarks);
+};
+
+const controlSubmitRecipe = async function (e: SubmitEvent) {
+  // console.log('Submit Recipe', e.target, e.currentTarget);
+
+  const recipeEntries = [
+    ...new FormData(e.target as HTMLFormElement),
+  ];
+
+  try {
+    addRecipeView.clearError();
+    addRecipeView.renderBusy();
+    try {
+      const res = await model.uploadRecipe(recipeEntries);
+      const recipe = res.data.recipe;
+
+      // Add recipe to bookmark
+      model.addBookmark(recipe);
+      bookmarksView.render(model.state.bookmarks);
+
+      // Change URL to show the recipe
+      window.location.hash = `#${recipe.id}`;
+    } finally {
+      addRecipeView.renderBusy(false);
+    }
+    addRecipeView.hide();
+  } catch (error) {
+    console.error(error);
+    addRecipeView.renderError((error as any).message);
+  }
 };
 
 const init = function () {
@@ -144,6 +176,7 @@ const init = function () {
   recipeView.addHandlerBookmark(controlBookmarks);
   searchView.addHandlerSearch(controlSearchResults);
   bookmarksView.addHandlerRender(controlBookmarks);
+  addRecipeView.addHandlerSubmit(controlSubmitRecipe);
 };
 
 init();

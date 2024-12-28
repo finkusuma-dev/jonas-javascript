@@ -1,4 +1,4 @@
-@use "base";
+@use 'base';
 
 .add-recipe-window {
   position: fixed;
@@ -24,6 +24,14 @@
     cursor: pointer;
     border: none;
     background: none;
+  }
+
+  spinner {
+    // margin: 5rem auto;
+    // text-align: center;
+    svg {
+      animation: rotate 2s infinite linear;
+    }
   }
 }
 
@@ -97,5 +105,27 @@
   &__btn {
     grid-column: 1 / -1;
     justify-self: center;
+  }
+
+  .error {
+    grid-column: 1/-1;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    display: flex;
+
+    svg {
+      height: 3rem;
+      width: 3rem;
+      fill: base.$color-primary;
+      transform: translateY(-0.3rem);
+    }
+
+    p {
+      margin-left: 1.5rem;
+      font-size: 1.8rem;
+      line-height: 1.5;
+      font-weight: 600;
+    }
   }
 }

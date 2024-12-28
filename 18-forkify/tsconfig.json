@@ -5,6 +5,7 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitOverride": true,
-    "target": "ES2015"
+    "target": "ES2015",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
   }
 }

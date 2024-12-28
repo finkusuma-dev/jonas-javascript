@@ -1,5 +1,5 @@
 import { API_URL, RESULT_PER_PAGE } from './config';
-import { getJSON } from './helpers';
+import { getJSON, sendJSON } from './helpers';
 import type { PaginateDataControl } from './lib/types';
 
 export type Ingredient = {
@@ -69,7 +69,9 @@ export const loadSearchResult = async function (query: string) {
   try {
     state.search.query = query;
 
-    const data = await getJSON(`${API_URL}?search=${query}`);
+    const data = await getJSON(
+      `${API_URL}?search=${query}&key=${process.env.API_KEY}`
+    );
 
     state.search.items = data.data.recipes.map(recipe =>
       assignRecipe(recipe)
@@ -84,6 +86,11 @@ export const getPaginateRecipes = function (
   page: number = state.search.page
 ): Recipe[] {
   return getPaginateItems(state.search.items, page);
+};
+
+export const addBookmark = function (recipe: Recipe) {
+  state.bookmarks.push(recipe);
+  saveBookmarks();
 };
 
 export const toggleBookmark = function () {
@@ -105,10 +112,12 @@ export const toggleBookmark = function () {
     state.bookmarks.splice(idx, 1);
   } else {
     console.log('Add recipe to bookmarks');
-    state.bookmarks.push(state.recipe);
+    state.bookmarks.push(state.recipe!);
   }
 
-  state.recipe.bookmarked = !state.recipe.bookmarked;
+  if (state.recipe) {
+    state.recipe.bookmarked = !state.recipe.bookmarked;
+  }
 
   saveBookmarks();
 };
@@ -131,6 +140,65 @@ export const getPaginateItems = function <T>(
   const end = page * RESULT_PER_PAGE - 1;
   // console.dir({ page, start, end });
   return allItems?.slice(start, end + 1) ?? [];
+};
+
+export const uploadRecipe = async function (
+  newRecipe: [string, FormDataEntryValue][]
+) {
+  try {
+    console.log({ newRecipe });
+    const uploadRecipe = prepareUploadRecipe(newRecipe);
+    console.log({ uploadRecipe });
+
+    const res = await sendJSON(
+      `${API_URL}?key=${process.env.API_KEY}`,
+      uploadRecipe
+    );
+    console.log({ res });
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const prepareUploadRecipe = function (newRecipe: any) {
+  const ingredients: Ingredient[] = newRecipe
+    .filter(
+      item => item[0].startsWith('ingredient') && item[1] !== ''
+    )
+    .map((item: [string, string]) => {
+      const values = item[1].replaceAll(' ', '').split(',');
+      if (values.length < 3) {
+        throw new Error(
+          "Some ingredients don't have the correct format!"
+        );
+      }
+      const [quantity, unit, description] = values;
+      return {
+        quantity: quantity ? +quantity : null,
+        unit,
+        description,
+      };
+    });
+
+  const recipeObj = {
+    ...Object.fromEntries(
+      newRecipe.filter(item => !item[0].includes('ingredient'))
+    ),
+    ingredients,
+  } as Omit<Recipe, 'id'>;
+
+  return {
+    title: recipeObj.title,
+    publisher: recipeObj.publisher,
+    image_url: recipeObj.image,
+    servings: recipeObj.servings ? +recipeObj.servings : null,
+    source_url: recipeObj.sourceUrl,
+    cooking_time: recipeObj.cookingTime
+      ? +recipeObj.cookingTime
+      : null,
+    ingredients,
+  };
 };
 
 const assignRecipe = function (jsonData: any): Recipe {
