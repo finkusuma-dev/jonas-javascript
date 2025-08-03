@@ -1,9 +1,12 @@
 import icons from 'url:../../img/icons.svg';
-import type { ControlPaginationFn, PaginateData } from '../lib/types';
+import type {
+  ControlPaginationFn,
+  PaginationData,
+} from '../lib/types';
 import View from './View';
 import { RESULT_PER_PAGE } from '../config';
 
-class PaginationView extends View<PaginateData<unknown>> {
+class PaginationView extends View<PaginationData<unknown>> {
   protected override _parentElement: HTMLElement =
     document.querySelector('.pagination')!;
 
@@ -43,7 +46,7 @@ class PaginationView extends View<PaginateData<unknown>> {
     return markup;
   }
 
-  addHandlerClick(handler: ControlPaginationFn) {
+  bindClickHandler(handler: ControlPaginationFn) {
     this._parentElement.addEventListener('click', function (e) {
       if (!e.target) return;
 

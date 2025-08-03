@@ -1,10 +1,10 @@
 export type ControlPaginationFn = (page?: number) => void;
 
-export type PaginateData<T> = {
+export type PaginationData<T> = {
   items?: T[];
   page: number;
 };
 
-export type PaginateDataControl<T> = PaginateData<T> & {
+export type PaginationDataControl<T> = PaginationData<T> & {
   controlPaginationFn?: ControlPaginationFn;
 };

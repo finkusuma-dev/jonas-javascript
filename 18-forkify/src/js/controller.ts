@@ -1,5 +1,8 @@
 import { isLastPage } from './helpers';
-import type { ControlPaginationFn, PaginateData } from './lib/types';
+import type {
+  ControlPaginationFn,
+  PaginationData,
+} from './lib/types';
 import * as model from './model';
 import bookmarksView from './views/bookmarksView';
 import addRecipeView from './views/addRecipeView';
@@ -15,7 +18,7 @@ import searchView from './views/searchView';
 //   module.hot.accept();
 // }
 
-const controlRecipe = async function () {
+const renderRecipe = async function () {
   try {
     const hashId = window.location.hash.slice(1);
 
@@ -26,7 +29,9 @@ const controlRecipe = async function () {
     recipeView.renderSpinner();
 
     /// Update the active search result item
-    /* 1. */ searchResultsView.update(model.getPaginateRecipes());
+    /* 1. */ searchResultsView.update(
+      model.getPaginatedRecipeItems()
+    );
     // 2. searchResultsView.renderActiveResult();
     // 3. searchResultsView.render(
     //   model.getPaginateRecipes()
@@ -43,11 +48,11 @@ const controlRecipe = async function () {
   }
 };
 
-export type ControlRecipeServingsFn = typeof controlRecipeServings;
+export type changeRecipeServingsFn = typeof changeServings;
 /**
  * @description Control handler for updating recipe servings
  */
-const controlRecipeServings = function (newServings: number) {
+const changeServings = function (newServings: number) {
   // console.log('controlRecipeServings amount', newServings);
   model.updateRecipeServings(newServings);
 
@@ -55,7 +60,7 @@ const controlRecipeServings = function (newServings: number) {
   // recipeView.renderServings(model.state.recipe!);
 };
 
-const controlSearchResults = async function () {
+const search = async function () {
   searchResultsView.renderSpinner();
   try {
     /// Load query
@@ -64,17 +69,17 @@ const controlSearchResults = async function () {
 
     /// Assign controlPagination function to model.state.search. Bind the required variables.
     model.state.search.controlPaginationFn = controlPagination.bind({
-      renderItemsCallback: function (page) {
-        searchResultsView.render(model.getPaginateRecipes(page));
+      renderPaginatedItemsCallback: function (page) {
+        searchResultsView.render(model.getPaginatedRecipeItems(page));
       },
-      dataState: model.state.search,
+      paginationData: model.state.search,
     });
 
     /// Call the control pagination function to render results & pagination
     model.state.search.controlPaginationFn!(1);
 
     /// Add pagination click handler
-    paginationView.addHandlerClick(
+    paginationView.bindClickHandler(
       model.state.search.controlPaginationFn
     );
   } catch (err) {
@@ -104,28 +109,28 @@ const controlSearchResults = async function () {
  */
 const controlPagination = function <T>(
   this: {
-    renderItemsCallback: ControlPaginationFn;
-    dataState: PaginateData<T>;
+    renderPaginatedItemsCallback: ControlPaginationFn;
+    paginationData: PaginationData<T>;
   },
   page: number = 1
 ) {
   /// Update page (state)
-  this.dataState.page = page;
+  this.paginationData.page = page;
 
   /// Render items on page
-  this.renderItemsCallback(page);
+  this.renderPaginatedItemsCallback(page);
 
   /// Render pagination
-  paginationView.render(this.dataState);
+  paginationView.render(this.paginationData);
 };
 
-export type ControlBookmarkFn = typeof controlBookmarks;
+export type ControlBookmarkFn = typeof bookmark;
 /**
  * @param init Optional param.
  * - true: Init the bookmark. Load from localStorage.
  * - false (default): Toggle the bookmark of the current recipe.
  */
-const controlBookmarks = function (toggle: boolean = false) {
+const bookmark = function (toggle: boolean = false) {
   if (toggle) {
     console.log('toggle bookmarks');
     model.toggleBookmark();
@@ -140,7 +145,7 @@ const controlBookmarks = function (toggle: boolean = false) {
   bookmarksView.render(model.state.bookmarks);
 };
 
-const controlSubmitRecipe = async function (e: SubmitEvent) {
+const submitRecipe = async function (e: SubmitEvent) {
   // console.log('Submit Recipe', e.target, e.currentTarget);
 
   const recipeEntries = [
@@ -162,7 +167,7 @@ const controlSubmitRecipe = async function (e: SubmitEvent) {
       recipeView.render(model.state.recipe);
 
       // Add current recipe to bookmarks
-      controlBookmarks(true);
+      bookmark(true);
     } finally {
       addRecipeView.renderBusy(false);
     }
@@ -174,12 +179,12 @@ const controlSubmitRecipe = async function (e: SubmitEvent) {
 };
 
 const init = function () {
-  recipeView.addHandlerRender(controlRecipe);
-  recipeView.addHandlerChangeServings(controlRecipeServings);
-  recipeView.addHandlerBookmark(controlBookmarks);
-  searchView.addHandlerSearch(controlSearchResults);
-  bookmarksView.addHandlerRender(controlBookmarks);
-  addRecipeView.addHandlerSubmit(controlSubmitRecipe);
+  recipeView.bindRender(renderRecipe);
+  recipeView.bindChangeServings(changeServings);
+  recipeView.bindBookmark(bookmark);
+  searchView.bindSearch(search);
+  bookmarksView.bindRender(bookmark);
+  addRecipeView.bindSubmit(submitRecipe);
 };
 
 init();

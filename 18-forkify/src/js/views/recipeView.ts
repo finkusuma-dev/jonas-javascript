@@ -4,7 +4,7 @@ import fracty from 'fracty';
 import * as model from '../model';
 import type {
   ControlBookmarkFn,
-  ControlRecipeServingsFn,
+  changeRecipeServingsFn,
 } from '../controller';
 import View from './View';
 
@@ -24,13 +24,13 @@ class RecipeView extends View<model.Recipe> {
   protected override _defaultMessage =
     'Start by searching for a recipe or an ingredient. Have fun!';
 
-  addHandlerRender(handler: () => void) {
+  bindRender(handler: () => void) {
     ['hashchange', 'load'].forEach(ev => {
       window.addEventListener(ev, handler);
     });
   }
 
-  addHandlerBookmark(handler: ControlBookmarkFn) {
+  bindBookmark(handler: ControlBookmarkFn) {
     this._parentElement
       // .querySelector<HTMLElement>('.btn--bookmark')!
       .addEventListener('click', e => {
@@ -45,7 +45,7 @@ class RecipeView extends View<model.Recipe> {
       });
   }
 
-  addHandlerChangeServings(handler: ControlRecipeServingsFn) {
+  bindChangeServings(handler: changeRecipeServingsFn) {
     this._parentElement
       // .querySelector<HTMLElement>('.recipe__info-buttons')!
       .addEventListener('click', e => {
@@ -164,7 +164,8 @@ class RecipeView extends View<model.Recipe> {
           <svg class="">
             <use href="${icons}#icon-bookmark${
       this._data.bookmarked ? '-fill' : ''
-    }"></use>
+    }">
+            </use>
           </svg>
         </button>
       </div>

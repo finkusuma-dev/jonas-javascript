@@ -19,7 +19,7 @@ class BookmarksView extends View<model.Recipe[]> {
       .join('');
   }
 
-  addHandlerRender(handler: ControlBookmarkFn) {
+  bindRender(handler: ControlBookmarkFn) {
     window.addEventListener('load', e => {
       handler();
     });

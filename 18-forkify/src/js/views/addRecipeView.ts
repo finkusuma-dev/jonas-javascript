@@ -35,7 +35,7 @@ class addRecipeView {
     this.#overlay.classList.add('hidden');
   }
 
-  addHandlerSubmit(handler: (e: SubmitEvent) => void) {
+  bindSubmit(handler: (e: SubmitEvent) => void) {
     this.#parentElement.addEventListener('submit', e => {
       e.preventDefault();
       handler(e);

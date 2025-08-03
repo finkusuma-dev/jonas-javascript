@@ -3,11 +3,13 @@ class SearchView {
 
   getQuery() {
     return (
-      this.#formElement.querySelector('.search__field')! as HTMLInputElement
+      this.#formElement.querySelector(
+        '.search__field'
+      )! as HTMLInputElement
     ).value;
   }
 
-  addHandlerSearch(handler: () => void) {
+  bindSearch(handler: () => void) {
     this.#formElement.addEventListener('submit', e => {
       e.preventDefault();
       handler();

@@ -6,6 +6,11 @@ export default class View<T> {
   protected _errorMessage: string = 'Error';
   protected _defaultMessage: string = 'This is default message';
 
+  /**
+   * Render the data to the DOM
+   * @param data The data to be rendered (e.q. recipe)
+   * @returns
+   */
   render(data?: T) {
     this._data = data;
 

@@ -1,6 +1,6 @@
 import { API_URL, RESULT_PER_PAGE } from './config';
 import { getJSON, sendJSON } from './helpers';
-import type { PaginateDataControl } from './lib/types';
+import type { PaginationDataControl } from './lib/types';
 
 export type Ingredient = {
   quantity: number;
@@ -20,7 +20,9 @@ export type Recipe = {
   key?: string;
 };
 
-export type Search = PaginateDataControl<Recipe> & { query?: string };
+export type Search = PaginationDataControl<Recipe> & {
+  query?: string;
+};
 
 export type State = {
   recipe?: Recipe;
@@ -78,16 +80,16 @@ export const loadSearchResult = async function (query: string) {
       assignRecipe(recipe)
     );
     // console.log('items length', state.search.items?.length ?? 0);
-    // console.log('items', state.search.items);
+    console.log('items', state.search.items);
   } catch (err) {
     throw err;
   }
 };
 
-export const getPaginateRecipes = function (
+export const getPaginatedRecipeItems = function (
   page: number = state.search.page
 ): Recipe[] {
-  return getPaginateItems(state.search.items, page);
+  return getPaginatedItems(state.search.items, page);
 };
 
 export const addBookmark = function (recipe: Recipe) {
@@ -134,7 +136,7 @@ export const loadBookmarks = function () {
   state.bookmarks = JSON.parse(strBookmarks);
 };
 
-export const getPaginateItems = function <T>(
+export const getPaginatedItems = function <T>(
   allItems?: T[],
   page: number = state.search.page
 ): T[] {
