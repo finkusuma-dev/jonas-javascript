@@ -46,8 +46,8 @@ export const loadRecipe = async function (id: string) {
     /// 1. Getting recipe
     const data = await getJSON(`${API_URL}/${id}`);
 
-    const { recipe } = data.data;
-    state.recipe = assignRecipe(recipe);
+    const { recipe: recipeJSON } = data.data;
+    state.recipe = assignRecipe(recipeJSON);
 
     // console.dir(state.recipe);
   } catch (err) {
@@ -100,11 +100,11 @@ export const addBookmark = function (recipe: Recipe) {
 export const toggleBookmark = function () {
   if (!state.recipe) return;
 
-  const bookmarked = state.bookmarks.find(
+  const isBookmarked = state.bookmarks.find(
     bookmark => bookmark.id === state.recipe!.id
   );
 
-  if (bookmarked) {
+  if (isBookmarked) {
     console.log('Remove recipe from bookmarks');
 
     const idx = state.bookmarks.findIndex(
