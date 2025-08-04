@@ -124,25 +124,27 @@ const controlPagination = function <T>(
   paginationView.render(this.paginationData);
 };
 
-export type ControlBookmarkFn = typeof bookmark;
+// export type ControlBookmarkFn = typeof bookmark;
 /**
  * @param init Optional param.
  * - true: Init the bookmark. Load from localStorage.
  * - false (default): Toggle the bookmark of the current recipe.
  */
-const bookmark = function (toggle: boolean = false) {
-  if (toggle) {
-    console.log('toggle bookmarks');
-    model.toggleBookmark();
-    recipeView.update(model.state.recipe);
-  }
-
+const renderBookmark = function () {
   /// Render message if there are no bookmarks
   if (!model.state.bookmarks.length) {
     return bookmarksView.renderMessage();
   }
 
   bookmarksView.render(model.state.bookmarks);
+};
+
+const toggleBookmark = function () {
+  console.log('toggle bookmarks');
+  model.toggleBookmark();
+  recipeView.update(model.state.recipe);
+
+  renderBookmark();
 };
 
 const submitRecipe = async function (e: SubmitEvent) {
@@ -167,7 +169,7 @@ const submitRecipe = async function (e: SubmitEvent) {
       recipeView.render(model.state.recipe);
 
       // Add current recipe to bookmarks
-      bookmark(true);
+      toggleBookmark();
     } finally {
       addRecipeView.renderBusy(false);
     }
@@ -181,9 +183,9 @@ const submitRecipe = async function (e: SubmitEvent) {
 const init = function () {
   recipeView.bindRender(renderRecipe);
   recipeView.bindChangeServings(changeServings);
-  recipeView.bindBookmark(bookmark);
+  recipeView.bindToggleBookmark(toggleBookmark);
   searchView.bindSearch(search);
-  bookmarksView.bindRender(bookmark);
+  bookmarksView.bindRender(renderBookmark);
   addRecipeView.bindSubmit(submitRecipe);
 };
 

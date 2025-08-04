@@ -1,7 +1,6 @@
 import icons from 'url:../../img/icons.svg';
 import * as model from '../model';
 import View from './View';
-import { type ControlBookmarkFn } from '../controller';
 import RecipePreview from './RecipePreview';
 
 class BookmarksView extends View<model.Recipe[]> {
@@ -19,7 +18,7 @@ class BookmarksView extends View<model.Recipe[]> {
       .join('');
   }
 
-  bindRender(handler: ControlBookmarkFn) {
+  bindRender(handler: Function) {
     window.addEventListener('load', e => {
       handler();
     });

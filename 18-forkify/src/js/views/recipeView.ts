@@ -2,10 +2,7 @@
 import icons from 'url:../../img/icons.svg'; /// parcel v2 => icons = path to the dist svg file.
 import fracty from 'fracty';
 import * as model from '../model';
-import type {
-  ControlBookmarkFn,
-  changeRecipeServingsFn,
-} from '../controller';
+import type { changeRecipeServingsFn } from '../controller';
 import View from './View';
 
 const securityElement = document.createElement('div');
@@ -30,7 +27,7 @@ class RecipeView extends View<model.Recipe> {
     });
   }
 
-  bindBookmark(handler: ControlBookmarkFn) {
+  bindToggleBookmark(handler: Function) {
     this._parentElement
       // .querySelector<HTMLElement>('.btn--bookmark')!
       .addEventListener('click', e => {
@@ -41,7 +38,7 @@ class RecipeView extends View<model.Recipe> {
         );
         if (!btn) return;
 
-        handler(true);
+        handler();
       });
   }
 
