@@ -48,7 +48,7 @@ const renderRecipe = async function () {
   }
 };
 
-export type changeRecipeServingsFn = typeof changeServings;
+export type ChangeServingsFn = typeof changeServings;
 /**
  * @description Control handler for updating recipe servings
  */

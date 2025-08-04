@@ -2,7 +2,7 @@
 import icons from 'url:../../img/icons.svg'; /// parcel v2 => icons = path to the dist svg file.
 import fracty from 'fracty';
 import * as model from '../model';
-import type { changeRecipeServingsFn } from '../controller';
+import type { ChangeServingsFn } from '../controller';
 import View from './View';
 
 const securityElement = document.createElement('div');
@@ -42,7 +42,7 @@ class RecipeView extends View<model.Recipe> {
       });
   }
 
-  bindChangeServings(handler: changeRecipeServingsFn) {
+  bindChangeServings(handler: ChangeServingsFn) {
     this._parentElement
       // .querySelector<HTMLElement>('.recipe__info-buttons')!
       .addEventListener('click', e => {
