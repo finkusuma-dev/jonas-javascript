@@ -1,6 +1,6 @@
 import icons from 'url:../../img/icons.svg';
 import type {
-  ControlPaginationFn,
+  PaginationNavigateFn,
   PaginationData,
 } from '../lib/types';
 import View from './View';
@@ -46,7 +46,7 @@ class PaginationView extends View<PaginationData<unknown>> {
     return markup;
   }
 
-  bindClickHandler(handler: ControlPaginationFn) {
+  bindButtonsClick(handler: PaginationNavigateFn) {
     this._parentElement.addEventListener('click', function (e) {
       if (!e.target) return;
 

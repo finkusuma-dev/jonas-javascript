@@ -37,7 +37,7 @@ export const state: State = {
     query: undefined,
     items: undefined,
     page: 1,
-    controlPaginationFn: undefined,
+    paginationNavigateFn: undefined,
   },
 };
 

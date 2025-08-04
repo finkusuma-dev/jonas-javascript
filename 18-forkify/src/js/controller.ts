@@ -1,6 +1,6 @@
 import { isLastPage } from './helpers';
 import type {
-  ControlPaginationFn,
+  PaginationNavigateFn,
   PaginationData,
 } from './lib/types';
 import * as model from './model';
@@ -68,19 +68,23 @@ const search = async function () {
     await model.loadSearchResult(query);
 
     /// Assign controlPagination function to model.state.search. Bind the required variables.
-    model.state.search.controlPaginationFn = controlPagination.bind({
-      renderPaginatedItemsCallback: function (page) {
-        searchResultsView.render(model.getPaginatedRecipeItems(page));
-      },
-      paginationData: model.state.search,
-    });
+    model.state.search.paginationNavigateFn = paginationNavigate.bind(
+      {
+        paginationNavigateCallback: function (page) {
+          searchResultsView.render(
+            model.getPaginatedRecipeItems(page)
+          );
+        },
+        paginationData: model.state.search,
+      }
+    );
 
     /// Call the control pagination function to render results & pagination
-    model.state.search.controlPaginationFn!(1);
+    model.state.search.paginationNavigateFn!(1);
 
     /// Add pagination click handler
-    paginationView.bindClickHandler(
-      model.state.search.controlPaginationFn
+    paginationView.bindButtonsClick(
+      model.state.search.paginationNavigateFn
     );
   } catch (err) {
     searchResultsView.renderError(err as string);
@@ -107,18 +111,18 @@ const search = async function () {
 /**
  * @description Update the page state, render items and pagination on a page.
  */
-const controlPagination = function <T>(
+const paginationNavigate = function <T>(
   this: {
-    renderPaginatedItemsCallback: ControlPaginationFn;
+    paginationNavigateCallback: PaginationNavigateFn;
     paginationData: PaginationData<T>;
   },
   page: number = 1
 ) {
-  /// Update page (state)
+  /// Update page
   this.paginationData.page = page;
 
   /// Render items on page
-  this.renderPaginatedItemsCallback(page);
+  this.paginationNavigateCallback(page);
 
   /// Render pagination
   paginationView.render(this.paginationData);
